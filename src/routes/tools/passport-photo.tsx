@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { jsPDF } from "jspdf";
-import { Upload, Download, IdCard, Loader2 } from "lucide-react";
+import { Upload, Download, IdCard, Loader2, Wand2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { SITE_NAME } from "@/lib/site";
 
@@ -46,6 +47,9 @@ const DPI = 300;
 function PassportPhotoPage() {
   const [src, setSrc] = useState<string | null>(null);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
+  const [originalImg, setOriginalImg] = useState<HTMLImageElement | null>(null);
+  const [bgRemoved, setBgRemoved] = useState(false);
+  const [removing, setRemoving] = useState(false);
   const [specId, setSpecId] = useState("us-passport");
   const [zoom, setZoom] = useState(1);
   const [offsetX, setOffsetX] = useState(0);
@@ -62,15 +66,43 @@ function PassportPhotoPage() {
     if (!f) return;
     const url = URL.createObjectURL(f);
     setSrc(url);
+    setBgRemoved(false);
     const im = new Image();
     im.onload = () => {
       setImg(im);
+      setOriginalImg(im);
       setZoom(1);
       setOffsetX(0);
       setOffsetY(0);
     };
     im.src = url;
   }, []);
+
+  const removeBg = useCallback(async () => {
+    if (!originalImg || !src) return;
+    setRemoving(true);
+    try {
+      const { removeBackground } = await import("@imgly/background-removal");
+      toast.info("Loading AI model (one-time, ~30 MB)…", { id: "bgrm" });
+      const blob = await removeBackground(src);
+      const url = URL.createObjectURL(blob);
+      const im = new Image();
+      im.onload = () => {
+        setImg(im);
+        setBgRemoved(true);
+        setRemoving(false);
+        toast.success("Background removed", { id: "bgrm" });
+      };
+      im.src = url;
+    } catch (e) {
+      setRemoving(false);
+      toast.error("Background removal failed: " + (e as Error).message, { id: "bgrm" });
+    }
+  }, [originalImg, src]);
+
+  const restoreOriginal = () => {
+    if (originalImg) { setImg(originalImg); setBgRemoved(false); }
+  };
 
   const renderCrop = useCallback((scale = 4) => {
     if (!img) return null;
@@ -214,8 +246,31 @@ function PassportPhotoPage() {
                 </SelectContent>
               </Select>
               <p className="mt-1.5 text-xs text-muted-foreground">
-                For best results upload a photo with a plain background.
+                For best results upload a photo with a plain background, or use AI removal below.
               </p>
+            </div>
+            <div className="rounded-xl border border-border/60 bg-surface p-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <Label className="text-sm">AI background removal</Label>
+                  <p className="text-xs text-muted-foreground">Runs in your browser. First use downloads a ~30 MB model.</p>
+                </div>
+                <Switch
+                  checked={bgRemoved}
+                  disabled={!originalImg || removing}
+                  onCheckedChange={(v) => v ? removeBg() : restoreOriginal()}
+                />
+              </div>
+              {removing && (
+                <div className="mt-2 text-xs text-muted-foreground flex items-center gap-2">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Processing…
+                </div>
+              )}
+              {!removing && !bgRemoved && originalImg && (
+                <Button size="sm" variant="ghost" className="mt-2 w-full" onClick={removeBg}>
+                  <Wand2 className="h-3.5 w-3.5 mr-1.5" /> Remove background now
+                </Button>
+              )}
             </div>
             <div>
               <Label>Zoom: {zoom.toFixed(2)}×</Label>

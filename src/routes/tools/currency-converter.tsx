@@ -24,7 +24,7 @@ export const Route = createFileRoute("/tools/currency-converter")({
 });
 
 // Frankfurter is a free, no-key ECB-backed FX API.
-const API = "https://api.frankfurter.app";
+const API = "https://api.frankfurter.dev/v1";
 
 const CURRENCIES = [
   ["USD", "US Dollar"], ["EUR", "Euro"], ["GBP", "British Pound"], ["JPY", "Japanese Yen"],
@@ -41,6 +41,7 @@ function CurrencyConverterPage() {
   const [from, setFrom] = useState("USD");
   const [to, setTo] = useState("EUR");
   const [amount, setAmount] = useState("100");
+  const [range, setRange] = useState<7 | 30 | 90>(30);
   const [rate, setRate] = useState<number | null>(null);
   const [date, setDate] = useState<string>("");
   const [history, setHistory] = useState<{ date: string; rate: number }[]>([]);
@@ -63,7 +64,7 @@ function CurrencyConverterPage() {
 
         const end = new Date();
         const start = new Date();
-        start.setDate(end.getDate() - 30);
+        start.setDate(end.getDate() - range);
         const fmt = (d: Date) => d.toISOString().slice(0, 10);
         const hist = await fetch(`${API}/${fmt(start)}..${fmt(end)}?from=${from}&to=${to}`).then((r) => r.json());
         if (cancelled) return;
@@ -79,7 +80,7 @@ function CurrencyConverterPage() {
     }
     void load();
     return () => { cancelled = true; };
-  }, [from, to]);
+  }, [from, to, range]);
 
   const converted = useMemo(() => {
     const n = parseFloat(amount);
@@ -162,13 +163,26 @@ function CurrencyConverterPage() {
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center justify-between">
-              <h2 className="font-semibold flex items-center gap-2"><TrendingUp className="h-4 w-4" /> 30-day trend</h2>
-              {history.length > 1 && (
-                <span className={`text-sm font-medium ${trend >= 0 ? "text-success" : "text-destructive"}`}>
-                  {trend >= 0 ? "▲" : "▼"} {Math.abs(trend).toFixed(2)}%
-                </span>
-              )}
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <h2 className="font-semibold flex items-center gap-2"><TrendingUp className="h-4 w-4" /> {range}-day trend</h2>
+              <div className="flex items-center gap-2">
+                <div className="inline-flex rounded-md border border-border overflow-hidden">
+                  {([7, 30, 90] as const).map((r) => (
+                    <button
+                      key={r}
+                      onClick={() => setRange(r)}
+                      className={`px-2.5 py-1 text-xs font-medium ${range === r ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:text-foreground"}`}
+                    >
+                      {r}d
+                    </button>
+                  ))}
+                </div>
+                {history.length > 1 && (
+                  <span className={`text-sm font-medium ${trend >= 0 ? "text-success" : "text-destructive"}`}>
+                    {trend >= 0 ? "▲" : "▼"} {Math.abs(trend).toFixed(2)}%
+                  </span>
+                )}
+              </div>
             </div>
             <div className="h-64 mt-4">
               {history.length > 1 ? (

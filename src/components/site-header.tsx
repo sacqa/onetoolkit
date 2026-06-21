@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { useIsAdmin } from "@/hooks/use-role";
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_NAME } from "@/lib/site";
 
@@ -17,6 +18,7 @@ const NAV = [
 
 export function SiteHeader() {
   const { user } = useAuth();
+  const { data: isAdmin } = useIsAdmin();
   const [open, setOpen] = useState(false);
 
   return (
@@ -43,6 +45,11 @@ export function SiteHeader() {
         <div className="hidden md:flex items-center gap-2">
           {user ? (
             <>
+              {isAdmin && (
+                <Button asChild variant="ghost" size="sm">
+                  <Link to="/admin"><Shield className="h-4 w-4 mr-1" />Admin</Link>
+                </Button>
+              )}
               <Button asChild variant="ghost" size="sm">
                 <Link to="/dashboard">Dashboard</Link>
               </Button>
