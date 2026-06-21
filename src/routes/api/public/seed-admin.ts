@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 const ADMIN_EMAIL = "4sac.qa@gmail.com";
 const ADMIN_PASSWORD = "Console@6221";
 
-export const Route = createFileRoute("/api/seed-admin")({
+export const Route = createFileRoute("/api/public/seed-admin")({
   server: {
     handlers: {
       GET: async () => {
