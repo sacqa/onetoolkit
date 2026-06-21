@@ -24,7 +24,7 @@ export const Route = createFileRoute("/tools/currency-converter")({
 });
 
 // Frankfurter is a free, no-key ECB-backed FX API.
-const API = "https://api.frankfurter.app";
+const API = "https://api.frankfurter.dev/v1";
 
 const CURRENCIES = [
   ["USD", "US Dollar"], ["EUR", "Euro"], ["GBP", "British Pound"], ["JPY", "Japanese Yen"],
