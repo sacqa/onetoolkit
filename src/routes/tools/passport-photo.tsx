@@ -246,8 +246,31 @@ function PassportPhotoPage() {
                 </SelectContent>
               </Select>
               <p className="mt-1.5 text-xs text-muted-foreground">
-                For best results upload a photo with a plain background.
+                For best results upload a photo with a plain background, or use AI removal below.
               </p>
+            </div>
+            <div className="rounded-xl border border-border/60 bg-surface p-3">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <Label className="text-sm">AI background removal</Label>
+                  <p className="text-xs text-muted-foreground">Runs in your browser. First use downloads a ~30 MB model.</p>
+                </div>
+                <Switch
+                  checked={bgRemoved}
+                  disabled={!originalImg || removing}
+                  onCheckedChange={(v) => v ? removeBg() : restoreOriginal()}
+                />
+              </div>
+              {removing && (
+                <div className="mt-2 text-xs text-muted-foreground flex items-center gap-2">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Processing…
+                </div>
+              )}
+              {!removing && !bgRemoved && originalImg && (
+                <Button size="sm" variant="ghost" className="mt-2 w-full" onClick={removeBg}>
+                  <Wand2 className="h-3.5 w-3.5 mr-1.5" /> Remove background now
+                </Button>
+              )}
             </div>
             <div>
               <Label>Zoom: {zoom.toFixed(2)}×</Label>
