@@ -41,6 +41,7 @@ function CurrencyConverterPage() {
   const [from, setFrom] = useState("USD");
   const [to, setTo] = useState("EUR");
   const [amount, setAmount] = useState("100");
+  const [range, setRange] = useState<7 | 30 | 90>(30);
   const [rate, setRate] = useState<number | null>(null);
   const [date, setDate] = useState<string>("");
   const [history, setHistory] = useState<{ date: string; rate: number }[]>([]);
@@ -63,7 +64,7 @@ function CurrencyConverterPage() {
 
         const end = new Date();
         const start = new Date();
-        start.setDate(end.getDate() - 30);
+        start.setDate(end.getDate() - range);
         const fmt = (d: Date) => d.toISOString().slice(0, 10);
         const hist = await fetch(`${API}/${fmt(start)}..${fmt(end)}?from=${from}&to=${to}`).then((r) => r.json());
         if (cancelled) return;
@@ -79,7 +80,7 @@ function CurrencyConverterPage() {
     }
     void load();
     return () => { cancelled = true; };
-  }, [from, to]);
+  }, [from, to, range]);
 
   const converted = useMemo(() => {
     const n = parseFloat(amount);
