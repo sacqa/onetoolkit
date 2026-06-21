@@ -23,6 +23,7 @@ import { Route as ToolsPassportPhotoRouteImport } from './routes/tools/passport-
 import { Route as ToolsInvoiceGeneratorRouteImport } from './routes/tools/invoice-generator'
 import { Route as ToolsImageCompressorRouteImport } from './routes/tools/image-compressor'
 import { Route as ToolsCurrencyConverterRouteImport } from './routes/tools/currency-converter'
+import { Route as ApiSeedAdminRouteImport } from './routes/api/seed-admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
@@ -95,6 +96,11 @@ const ToolsCurrencyConverterRoute = ToolsCurrencyConverterRouteImport.update({
   path: '/tools/currency-converter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiSeedAdminRoute = ApiSeedAdminRouteImport.update({
+  id: '/api/seed-admin',
+  path: '/api/seed-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/seed-admin': typeof ApiSeedAdminRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/seed-admin': typeof ApiSeedAdminRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/seed-admin': typeof ApiSeedAdminRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
@@ -172,6 +181,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin'
     | '/dashboard'
+    | '/api/seed-admin'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
@@ -189,6 +199,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin'
     | '/dashboard'
+    | '/api/seed-admin'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/api/seed-admin'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  ApiSeedAdminRoute: typeof ApiSeedAdminRoute
   ToolsCurrencyConverterRoute: typeof ToolsCurrencyConverterRoute
   ToolsImageCompressorRoute: typeof ToolsImageCompressorRoute
   ToolsInvoiceGeneratorRoute: typeof ToolsInvoiceGeneratorRoute
@@ -331,6 +344,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsCurrencyConverterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/seed-admin': {
+      id: '/api/seed-admin'
+      path: '/api/seed-admin'
+      fullPath: '/api/seed-admin'
+      preLoaderRoute: typeof ApiSeedAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -371,6 +391,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  ApiSeedAdminRoute: ApiSeedAdminRoute,
   ToolsCurrencyConverterRoute: ToolsCurrencyConverterRoute,
   ToolsImageCompressorRoute: ToolsImageCompressorRoute,
   ToolsInvoiceGeneratorRoute: ToolsInvoiceGeneratorRoute,
