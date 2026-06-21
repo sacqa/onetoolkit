@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Settings as SettingsIcon, DollarSign, Loader2, Crown } from "lucide-react";
+import { Shield, Users, FileText, Settings as SettingsIcon, DollarSign, Loader2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
@@ -33,8 +33,6 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 function AdminPage() {
   const { data: isAdmin, isLoading: roleLoading } = useIsAdmin();
-  const [bootstrapped, setBootstrapped] = useState(false);
-  const [bootstrapping, setBootstrapping] = useState(false);
 
   if (roleLoading) {
     return <Shell><div className="text-muted-foreground">Checking permissions…</div></Shell>;
@@ -47,29 +45,8 @@ function AdminPage() {
           <Shield className="h-6 w-6 text-primary mb-3" />
           <h2 className="font-semibold">Admin access required</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            This area is restricted to administrators. If no admin has been set up yet,
-            you can claim the admin role — this only works while the system has zero admins.
+            This area is restricted to administrators. Please contact an existing admin to be granted access.
           </p>
-          <Button
-            className="mt-4"
-            disabled={bootstrapping || bootstrapped}
-            onClick={async () => {
-              setBootstrapping(true);
-              const { data, error } = await supabase.rpc("bootstrap_first_admin");
-              setBootstrapping(false);
-              if (error) { toast.error(error.message); return; }
-              if (data) {
-                toast.success("You are now the first admin. Refreshing…");
-                setBootstrapped(true);
-                setTimeout(() => window.location.reload(), 800);
-              } else {
-                toast.error("An admin already exists. Ask them to grant you access.");
-              }
-            }}
-          >
-            <Crown className="h-4 w-4 mr-2" />
-            {bootstrapping ? "Working…" : "Claim first-admin"}
-          </Button>
         </div>
       </Shell>
     );
