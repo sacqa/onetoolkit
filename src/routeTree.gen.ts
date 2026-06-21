@@ -25,6 +25,7 @@ import { Route as ToolsImageCompressorRouteImport } from './routes/tools/image-c
 import { Route as ToolsCurrencyConverterRouteImport } from './routes/tools/currency-converter'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as ApiPublicSeedAdminRouteImport } from './routes/api/public/seed-admin'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -105,6 +106,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicSeedAdminRoute = ApiPublicSeedAdminRouteImport.update({
+  id: '/api/public/seed-admin',
+  path: '/api/public/seed-admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
+  '/api/public/seed-admin': typeof ApiPublicSeedAdminRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
+  '/api/public/seed-admin': typeof ApiPublicSeedAdminRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
+  '/api/public/seed-admin': typeof ApiPublicSeedAdminRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/qr-code-generator'
+    | '/api/public/seed-admin'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/qr-code-generator'
+    | '/api/public/seed-admin'
   id:
     | '__root__'
     | '/'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/qr-code-generator'
+    | '/api/public/seed-admin'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -229,6 +241,7 @@ export interface RootRouteChildren {
   ToolsInvoiceGeneratorRoute: typeof ToolsInvoiceGeneratorRoute
   ToolsPassportPhotoRoute: typeof ToolsPassportPhotoRoute
   ToolsQrCodeGeneratorRoute: typeof ToolsQrCodeGeneratorRoute
+  ApiPublicSeedAdminRoute: typeof ApiPublicSeedAdminRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -345,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/seed-admin': {
+      id: '/api/public/seed-admin'
+      path: '/api/public/seed-admin'
+      fullPath: '/api/public/seed-admin'
+      preLoaderRoute: typeof ApiPublicSeedAdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -376,6 +396,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToolsInvoiceGeneratorRoute: ToolsInvoiceGeneratorRoute,
   ToolsPassportPhotoRoute: ToolsPassportPhotoRoute,
   ToolsQrCodeGeneratorRoute: ToolsQrCodeGeneratorRoute,
+  ApiPublicSeedAdminRoute: ApiPublicSeedAdminRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
