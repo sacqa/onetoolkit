@@ -163,13 +163,26 @@ function CurrencyConverterPage() {
           </div>
 
           <div className="rounded-2xl border border-border bg-card p-6">
-            <div className="flex items-center justify-between">
-              <h2 className="font-semibold flex items-center gap-2"><TrendingUp className="h-4 w-4" /> 30-day trend</h2>
-              {history.length > 1 && (
-                <span className={`text-sm font-medium ${trend >= 0 ? "text-success" : "text-destructive"}`}>
-                  {trend >= 0 ? "▲" : "▼"} {Math.abs(trend).toFixed(2)}%
-                </span>
-              )}
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <h2 className="font-semibold flex items-center gap-2"><TrendingUp className="h-4 w-4" /> {range}-day trend</h2>
+              <div className="flex items-center gap-2">
+                <div className="inline-flex rounded-md border border-border overflow-hidden">
+                  {([7, 30, 90] as const).map((r) => (
+                    <button
+                      key={r}
+                      onClick={() => setRange(r)}
+                      className={`px-2.5 py-1 text-xs font-medium ${range === r ? "bg-primary text-primary-foreground" : "bg-card text-muted-foreground hover:text-foreground"}`}
+                    >
+                      {r}d
+                    </button>
+                  ))}
+                </div>
+                {history.length > 1 && (
+                  <span className={`text-sm font-medium ${trend >= 0 ? "text-success" : "text-destructive"}`}>
+                    {trend >= 0 ? "▲" : "▼"} {Math.abs(trend).toFixed(2)}%
+                  </span>
+                )}
+              </div>
             </div>
             <div className="h-64 mt-4">
               {history.length > 1 ? (
