@@ -35,23 +35,23 @@ export const TOOLS = [
   {
     slug: "passport-photo",
     name: "Passport Photo Maker",
-    blurb: "Auto-crop and arrange passport-size photos for any country format.",
+    blurb: "Crop and arrange passport-size photos for 10+ country formats.",
     icon: "passport",
-    live: false,
+    live: true,
   },
   {
     slug: "image-compressor",
     name: "Image Compressor",
     blurb: "Shrink JPG, PNG and WEBP images in your browser — nothing leaves your device.",
     icon: "compress",
-    live: false,
+    live: true,
   },
   {
     slug: "currency-converter",
     name: "Currency Converter",
-    blurb: "Live exchange rates for 150+ currencies with 30-day trend charts.",
+    blurb: "Live exchange rates for 30+ currencies with 30-day trend charts.",
     icon: "currency",
-    live: false,
+    live: true,
   },
 ] as const;
 

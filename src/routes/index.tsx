@@ -34,7 +34,7 @@ function Home() {
         <section className="hero-gradient">
           <div className="container-page py-20 sm:py-28 text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground">
-              <span className="h-1.5 w-1.5 rounded-full bg-success" /> 7 free tools, no signup required
+              <span className="h-1.5 w-1.5 rounded-full bg-success" /> 5 free tools live, more coming
             </span>
             <h1 className="mt-6 text-4xl sm:text-6xl font-bold tracking-tight text-foreground">
               Everyday tools.<br />

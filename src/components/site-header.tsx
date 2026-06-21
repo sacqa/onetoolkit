@@ -9,8 +9,10 @@ import { SITE_NAME } from "@/lib/site";
 const NAV = [
   { to: "/tools/qr-code-generator", label: "QR Code" },
   { to: "/tools/invoice-generator", label: "Invoice" },
+  { to: "/tools/image-compressor", label: "Compress" },
+  { to: "/tools/passport-photo", label: "Passport" },
+  { to: "/tools/currency-converter", label: "Currency" },
   { to: "/about", label: "About" },
-  { to: "/contact", label: "Contact" },
 ] as const;
 
 export function SiteHeader() {

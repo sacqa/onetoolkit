@@ -19,7 +19,10 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ToolsQrCodeGeneratorRouteImport } from './routes/tools/qr-code-generator'
+import { Route as ToolsPassportPhotoRouteImport } from './routes/tools/passport-photo'
 import { Route as ToolsInvoiceGeneratorRouteImport } from './routes/tools/invoice-generator'
+import { Route as ToolsImageCompressorRouteImport } from './routes/tools/image-compressor'
+import { Route as ToolsCurrencyConverterRouteImport } from './routes/tools/currency-converter'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 
 const TermsRoute = TermsRouteImport.update({
@@ -71,9 +74,24 @@ const ToolsQrCodeGeneratorRoute = ToolsQrCodeGeneratorRouteImport.update({
   path: '/tools/qr-code-generator',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsPassportPhotoRoute = ToolsPassportPhotoRouteImport.update({
+  id: '/tools/passport-photo',
+  path: '/tools/passport-photo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToolsInvoiceGeneratorRoute = ToolsInvoiceGeneratorRouteImport.update({
   id: '/tools/invoice-generator',
   path: '/tools/invoice-generator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToolsImageCompressorRoute = ToolsImageCompressorRouteImport.update({
+  id: '/tools/image-compressor',
+  path: '/tools/image-compressor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToolsCurrencyConverterRoute = ToolsCurrencyConverterRouteImport.update({
+  id: '/tools/currency-converter',
+  path: '/tools/currency-converter',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -92,7 +110,10 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
+  '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
+  '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
 }
 export interface FileRoutesByTo {
@@ -105,7 +126,10 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
+  '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
+  '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
 }
 export interface FileRoutesById {
@@ -120,7 +144,10 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
+  '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
+  '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
 }
 export interface FileRouteTypes {
@@ -135,7 +162,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/dashboard'
+    | '/tools/currency-converter'
+    | '/tools/image-compressor'
     | '/tools/invoice-generator'
+    | '/tools/passport-photo'
     | '/tools/qr-code-generator'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -148,7 +178,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/dashboard'
+    | '/tools/currency-converter'
+    | '/tools/image-compressor'
     | '/tools/invoice-generator'
+    | '/tools/passport-photo'
     | '/tools/qr-code-generator'
   id:
     | '__root__'
@@ -162,7 +195,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/_authenticated/dashboard'
+    | '/tools/currency-converter'
+    | '/tools/image-compressor'
     | '/tools/invoice-generator'
+    | '/tools/passport-photo'
     | '/tools/qr-code-generator'
   fileRoutesById: FileRoutesById
 }
@@ -176,7 +212,10 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  ToolsCurrencyConverterRoute: typeof ToolsCurrencyConverterRoute
+  ToolsImageCompressorRoute: typeof ToolsImageCompressorRoute
   ToolsInvoiceGeneratorRoute: typeof ToolsInvoiceGeneratorRoute
+  ToolsPassportPhotoRoute: typeof ToolsPassportPhotoRoute
   ToolsQrCodeGeneratorRoute: typeof ToolsQrCodeGeneratorRoute
 }
 
@@ -252,11 +291,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsQrCodeGeneratorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/passport-photo': {
+      id: '/tools/passport-photo'
+      path: '/tools/passport-photo'
+      fullPath: '/tools/passport-photo'
+      preLoaderRoute: typeof ToolsPassportPhotoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools/invoice-generator': {
       id: '/tools/invoice-generator'
       path: '/tools/invoice-generator'
       fullPath: '/tools/invoice-generator'
       preLoaderRoute: typeof ToolsInvoiceGeneratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/image-compressor': {
+      id: '/tools/image-compressor'
+      path: '/tools/image-compressor'
+      fullPath: '/tools/image-compressor'
+      preLoaderRoute: typeof ToolsImageCompressorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/currency-converter': {
+      id: '/tools/currency-converter'
+      path: '/tools/currency-converter'
+      fullPath: '/tools/currency-converter'
+      preLoaderRoute: typeof ToolsCurrencyConverterRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -290,7 +350,10 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  ToolsCurrencyConverterRoute: ToolsCurrencyConverterRoute,
+  ToolsImageCompressorRoute: ToolsImageCompressorRoute,
   ToolsInvoiceGeneratorRoute: ToolsInvoiceGeneratorRoute,
+  ToolsPassportPhotoRoute: ToolsPassportPhotoRoute,
   ToolsQrCodeGeneratorRoute: ToolsQrCodeGeneratorRoute,
 }
 export const routeTree = rootRouteImport
