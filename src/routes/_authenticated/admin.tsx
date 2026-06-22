@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ReactMarkdown from "react-markdown";
@@ -15,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-role";
+import { updateUserRole } from "@/lib/admin.functions";
 import {
   DEFAULT_ADSENSE, DEFAULT_LIMITS, getSetting, setSetting,
   type AdSenseSettings, type LimitsSettings,
@@ -94,6 +96,7 @@ function Shell({ children }: { children: React.ReactNode }) {
 /* -------- Users -------- */
 function UsersTab() {
   const qc = useQueryClient();
+  const updateRole = useServerFn(updateUserRole);
   const { data: users, isLoading } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
@@ -109,8 +112,7 @@ function UsersTab() {
 
   const setRole = useMutation({
     mutationFn: async ({ id, role }: { id: string; role: "admin" | "user" }) => {
-      const { error } = await supabase.rpc("set_user_role", { _target_user: id, _new_role: role });
-      if (error) throw error;
+      await updateRole({ data: { id, role } });
     },
     onSuccess: () => { toast.success("Role updated"); qc.invalidateQueries({ queryKey: ["admin-users"] }); },
     onError: (e: Error) => toast.error(e.message),
