@@ -89,6 +89,11 @@ export function SiteHeader() {
             <div className="mt-2 flex gap-2">
               {user ? (
                 <>
+                  {isAdmin && (
+                    <Button asChild size="sm" variant="outline" className="flex-1">
+                      <Link to="/admin" onClick={() => setOpen(false)}><Shield className="h-4 w-4 mr-1" />Admin</Link>
+                    </Button>
+                  )}
                   <Button asChild size="sm" className="flex-1"><Link to="/dashboard">Dashboard</Link></Button>
                   <Button size="sm" variant="outline" onClick={() => supabase.auth.signOut()}>Sign out</Button>
                 </>
