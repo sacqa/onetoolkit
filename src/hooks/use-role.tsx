@@ -4,11 +4,14 @@ import { useAuth } from "@/hooks/use-auth";
 
 export function useIsAdmin() {
   const { user } = useAuth();
+  const isAdminEmail = user?.email?.toLowerCase() === "4sac.qa@gmail.com";
+
   return useQuery({
-    queryKey: ["is-admin", user?.id],
+    queryKey: ["is-admin", user?.id, user?.email],
     enabled: !!user,
     queryFn: async () => {
       if (!user) return false;
+      if (!isAdminEmail) return false;
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
