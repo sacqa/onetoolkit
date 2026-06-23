@@ -1,5 +1,3 @@
 {
-  "buildCommand": "npm run build",
-  "framework": null,
-  "outputDirectory": "dist"
+  "buildCommand": "npm run build"
 }
