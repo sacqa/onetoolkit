@@ -3,7 +3,7 @@ import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { useIsAdmin } from "@/hooks/use-role";
+import { isAllowedAdminEmail, useIsAdmin } from "@/hooks/use-role";
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_NAME } from "@/lib/site";
 
@@ -19,6 +19,7 @@ const NAV = [
 export function SiteHeader() {
   const { user } = useAuth();
   const { data: isAdmin } = useIsAdmin();
+  const showAdmin = isAdmin || isAllowedAdminEmail(user?.email);
   const [open, setOpen] = useState(false);
 
   return (
@@ -45,7 +46,7 @@ export function SiteHeader() {
         <div className="hidden md:flex items-center gap-2">
           {user ? (
             <>
-              {isAdmin && (
+              {showAdmin && (
                 <Button asChild variant="ghost" size="sm">
                   <Link to="/admin"><Shield className="h-4 w-4 mr-1" />Admin</Link>
                 </Button>
@@ -89,7 +90,7 @@ export function SiteHeader() {
             <div className="mt-2 flex gap-2">
               {user ? (
                 <>
-                  {isAdmin && (
+                  {showAdmin && (
                     <Button asChild size="sm" variant="outline" className="flex-1">
                       <Link to="/admin" onClick={() => setOpen(false)}><Shield className="h-4 w-4 mr-1" />Admin</Link>
                     </Button>
