@@ -101,19 +101,30 @@ export function SiteHeader() {
                 <>
                   {showAdmin && (
                     <Button asChild size="sm" variant="outline" className="flex-1">
-                      <Link to="/admin" onClick={() => setOpen(false)}><Shield className="h-4 w-4 mr-1" />Admin</Link>
+                      <Link to="/admin" onClick={() => setOpen(false)}>
+                        <Shield className="h-4 w-4 mr-1" />
+                        Admin
+                      </Link>
                     </Button>
                   )}
-                  <Button asChild size="sm" className="flex-1"><Link to="/dashboard">Dashboard</Link></Button>
-                  <Button size="sm" variant="outline" onClick={() => supabase.auth.signOut()}>Sign out</Button>
+                  <Button asChild size="sm" className="flex-1">
+                    <Link to="/dashboard">Dashboard</Link>
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => supabase.auth.signOut()}>
+                    Sign out
+                  </Button>
                 </>
               ) : (
                 <>
                   <Button asChild size="sm" variant="outline" className="flex-1">
-                    <Link to="/auth" search={{ mode: "signin" }}>Sign in</Link>
+                    <Link to="/auth" search={{ mode: "signin" }}>
+                      Sign in
+                    </Link>
                   </Button>
                   <Button asChild size="sm" className="flex-1">
-                    <Link to="/auth" search={{ mode: "signup" }}>Sign up</Link>
+                    <Link to="/auth" search={{ mode: "signup" }}>
+                      Sign up
+                    </Link>
                   </Button>
                 </>
               )}
