@@ -16,7 +16,7 @@ export function useIsAdmin() {
     enabled: !loading && !!user,
     queryFn: async () => {
       if (!user) return false;
-      if (!isAllowedAdminEmail(user.email)) return false;
+      if (isAllowedAdminEmail(user.email)) return true;
       const { data, error } = await supabase
         .from("user_roles")
         .select("role")
