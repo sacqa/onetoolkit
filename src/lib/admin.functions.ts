@@ -7,10 +7,7 @@ const roleInput = z.object({
   role: z.enum(["admin", "user"]),
 });
 
-const ADMIN_EMAILS = new Set([
-  "noonnashpati@gmail.com",
-  "lightlabprints@gmail.com",
-]);
+const ADMIN_EMAILS = new Set(["noonnashpati@gmail.com", "lightlabprints@gmail.com"]);
 
 export const updateUserRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -43,9 +40,7 @@ export const updateUserRole = createServerFn({ method: "POST" })
 
     if (targetError) throw targetError;
 
-    const targetIsApprovedAdmin = ADMIN_EMAILS.has(
-      targetProfile?.email?.toLowerCase() ?? "",
-    );
+    const targetIsApprovedAdmin = ADMIN_EMAILS.has(targetProfile?.email?.toLowerCase() ?? "");
 
     if (targetIsApprovedAdmin && data.role !== "admin") {
       throw new Error("Approved administrator accounts must keep admin access");
