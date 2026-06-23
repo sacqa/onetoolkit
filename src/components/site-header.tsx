@@ -3,7 +3,7 @@ import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { useIsAdmin } from "@/hooks/use-role";
+import { isAllowedAdminEmail, useIsAdmin } from "@/hooks/use-role";
 import { supabase } from "@/integrations/supabase/client";
 import { SITE_NAME } from "@/lib/site";
 
@@ -19,13 +19,16 @@ const NAV = [
 export function SiteHeader() {
   const { user } = useAuth();
   const { data: isAdmin } = useIsAdmin();
+  const showAdmin = isAdmin || isAllowedAdminEmail(user?.email);
   const [open, setOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2 font-semibold text-foreground">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">◆</span>
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            ◆
+          </span>
           <span>{SITE_NAME}</span>
         </Link>
 
@@ -45,9 +48,12 @@ export function SiteHeader() {
         <div className="hidden md:flex items-center gap-2">
           {user ? (
             <>
-              {isAdmin && (
+              {showAdmin && (
                 <Button asChild variant="ghost" size="sm">
-                  <Link to="/admin"><Shield className="h-4 w-4 mr-1" />Admin</Link>
+                  <Link to="/admin">
+                    <Shield className="h-4 w-4 mr-1" />
+                    Admin
+                  </Link>
                 </Button>
               )}
               <Button asChild variant="ghost" size="sm">
@@ -60,10 +66,14 @@ export function SiteHeader() {
           ) : (
             <>
               <Button asChild variant="ghost" size="sm">
-                <Link to="/auth" search={{ mode: "signin" }}>Sign in</Link>
+                <Link to="/auth" search={{ mode: "signin" }}>
+                  Sign in
+                </Link>
               </Button>
               <Button asChild size="sm">
-                <Link to="/auth" search={{ mode: "signup" }}>Get started</Link>
+                <Link to="/auth" search={{ mode: "signup" }}>
+                  Get started
+                </Link>
               </Button>
             </>
           )}
@@ -89,21 +99,32 @@ export function SiteHeader() {
             <div className="mt-2 flex gap-2">
               {user ? (
                 <>
-                  {isAdmin && (
+                  {showAdmin && (
                     <Button asChild size="sm" variant="outline" className="flex-1">
-                      <Link to="/admin" onClick={() => setOpen(false)}><Shield className="h-4 w-4 mr-1" />Admin</Link>
+                      <Link to="/admin" onClick={() => setOpen(false)}>
+                        <Shield className="h-4 w-4 mr-1" />
+                        Admin
+                      </Link>
                     </Button>
                   )}
-                  <Button asChild size="sm" className="flex-1"><Link to="/dashboard">Dashboard</Link></Button>
-                  <Button size="sm" variant="outline" onClick={() => supabase.auth.signOut()}>Sign out</Button>
+                  <Button asChild size="sm" className="flex-1">
+                    <Link to="/dashboard">Dashboard</Link>
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => supabase.auth.signOut()}>
+                    Sign out
+                  </Button>
                 </>
               ) : (
                 <>
                   <Button asChild size="sm" variant="outline" className="flex-1">
-                    <Link to="/auth" search={{ mode: "signin" }}>Sign in</Link>
+                    <Link to="/auth" search={{ mode: "signin" }}>
+                      Sign in
+                    </Link>
                   </Button>
                   <Button asChild size="sm" className="flex-1">
-                    <Link to="/auth" search={{ mode: "signup" }}>Sign up</Link>
+                    <Link to="/auth" search={{ mode: "signup" }}>
+                      Sign up
+                    </Link>
                   </Button>
                 </>
               )}
