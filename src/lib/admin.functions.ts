@@ -7,10 +7,17 @@ const roleInput = z.object({
   role: z.enum(["admin", "user"]),
 });
 
+const ADMIN_EMAILS = new Set(["noonnashpati@gmail.com", "lightlabprints@gmail.com"]);
+
 export const updateUserRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data) => roleInput.parse(data))
   .handler(async ({ context, data }) => {
+    const callerEmail = typeof context.claims.email === "string" ? context.claims.email.toLowerCase() : "";
+    if (!ADMIN_EMAILS.has(callerEmail)) {
+      throw new Error("Admin role required");
+    }
+
     const { data: adminRole, error: roleError } = await context.supabase
       .from("user_roles")
       .select("role")
@@ -23,6 +30,19 @@ export const updateUserRole = createServerFn({ method: "POST" })
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    if (data.role === "admin") {
+      const { data: targetProfile, error: targetError } = await supabaseAdmin
+        .from("profiles")
+        .select("email")
+        .eq("id", data.id)
+        .maybeSingle();
+
+      if (targetError) throw targetError;
+      if (!ADMIN_EMAILS.has(targetProfile?.email?.toLowerCase() ?? "")) {
+        throw new Error("Only approved administrator accounts can receive admin access");
+      }
+    }
 
     if (data.id === context.userId && data.role !== "admin") {
       const { count, error: countError } = await supabaseAdmin
