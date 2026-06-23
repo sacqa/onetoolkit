@@ -31,15 +31,22 @@ export const updateUserRole = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    if (data.role === "admin") {
-      const { data: targetProfile, error: targetError } = await supabaseAdmin
-        .from("profiles")
-        .select("email")
-        .eq("id", data.id)
-        .maybeSingle();
+    const { data: targetProfile, error: targetError } = await supabaseAdmin
+      .from("profiles")
+      .select("email")
+      .eq("id", data.id)
+      .maybeSingle();
 
-      if (targetError) throw targetError;
-      if (!ADMIN_EMAILS.has(targetProfile?.email?.toLowerCase() ?? "")) {
+    if (targetError) throw targetError;
+
+    const targetIsApprovedAdmin = ADMIN_EMAILS.has(targetProfile?.email?.toLowerCase() ?? "");
+
+    if (targetIsApprovedAdmin && data.role !== "admin") {
+      throw new Error("Approved administrator accounts must keep admin access");
+    }
+
+    if (data.role === "admin") {
+      if (!targetIsApprovedAdmin) {
         throw new Error("Only approved administrator accounts can receive admin access");
       }
     }
