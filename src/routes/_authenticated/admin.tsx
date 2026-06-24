@@ -345,7 +345,7 @@ function AdSenseTab() {
       <div className="rounded-2xl border border-border bg-card p-6">
         <h2 className="font-semibold">ads.txt</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Copy this into <Link to="/ads.txt" className="underline">/ads.txt</Link> on your host once your publisher ID is set.
+          Copy this into <a href="/ads.txt" className="underline">/ads.txt</a> on your host once your publisher ID is set.
         </p>
         <pre className="mt-3 rounded-lg bg-surface border border-border/60 p-3 text-xs overflow-x-auto">{adsTxt}</pre>
       </div>

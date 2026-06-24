@@ -11,7 +11,7 @@ const ADMIN_EMAILS = new Set(["noonnashpati@gmail.com", "lightlabprints@gmail.co
 
 export const updateUserRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .Validator((data) => roleInput.parse(data))
+  .inputValidator((data) => roleInput.parse(data))
   .handler(async ({ context, data }) => {
     const callerEmail =
       typeof context.claims.email === "string" ? context.claims.email.toLowerCase() : "";
