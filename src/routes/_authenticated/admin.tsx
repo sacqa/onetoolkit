@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Settings as SettingsIcon, DollarSign, Loader2 } from "lucide-react";
+import { Shield, Users, FileText, Settings as SettingsIcon, DollarSign, Loader2, Home, Wrench, Megaphone, BarChart3, Plus, Trash2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,11 @@ import {
   DEFAULT_ADSENSE, DEFAULT_LIMITS, getSetting, setSetting,
   type AdSenseSettings, type LimitsSettings,
 } from "@/lib/app-settings";
+import {
+  DEFAULT_BRANDING, DEFAULT_FEATURES, DEFAULT_HERO, DEFAULT_INTEGRATIONS, DEFAULT_TOOLS,
+  loadSetting, saveSetting,
+  type FeatureItem, type HeroContent, type Integrations, type SiteBranding, type ToolCard,
+} from "@/lib/homepage-content";
 import { SITE_NAME } from "@/lib/site";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -56,13 +61,21 @@ function AdminPage() {
 
   return (
     <Shell>
-      <Tabs defaultValue="users">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
+      <Tabs defaultValue="homepage">
+        <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/60 p-1">
+          <TabsTrigger value="homepage"><Home className="h-4 w-4 mr-2" />Homepage</TabsTrigger>
+          <TabsTrigger value="tools"><Wrench className="h-4 w-4 mr-2" />Tools</TabsTrigger>
+          <TabsTrigger value="features"><Megaphone className="h-4 w-4 mr-2" />Features</TabsTrigger>
+          <TabsTrigger value="integrations"><BarChart3 className="h-4 w-4 mr-2" />SEO &amp; Analytics</TabsTrigger>
           <TabsTrigger value="users"><Users className="h-4 w-4 mr-2" />Users</TabsTrigger>
-          <TabsTrigger value="content"><FileText className="h-4 w-4 mr-2" />Content</TabsTrigger>
-          <TabsTrigger value="settings"><SettingsIcon className="h-4 w-4 mr-2" />Settings</TabsTrigger>
+          <TabsTrigger value="content"><FileText className="h-4 w-4 mr-2" />Pages</TabsTrigger>
+          <TabsTrigger value="settings"><SettingsIcon className="h-4 w-4 mr-2" />Limits</TabsTrigger>
           <TabsTrigger value="adsense"><DollarSign className="h-4 w-4 mr-2" />AdSense</TabsTrigger>
         </TabsList>
+        <TabsContent value="homepage" className="mt-6"><HomepageTab /></TabsContent>
+        <TabsContent value="tools" className="mt-6"><ToolsTab /></TabsContent>
+        <TabsContent value="features" className="mt-6"><FeaturesTab /></TabsContent>
+        <TabsContent value="integrations" className="mt-6"><IntegrationsTab /></TabsContent>
         <TabsContent value="users" className="mt-6"><UsersTab /></TabsContent>
         <TabsContent value="content" className="mt-6"><ContentTab /></TabsContent>
         <TabsContent value="settings" className="mt-6"><SettingsTab /></TabsContent>
