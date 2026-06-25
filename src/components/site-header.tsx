@@ -1,11 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, X, Shield } from "lucide-react";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { isAllowedAdminEmail, useIsAdmin } from "@/hooks/use-role";
 import { supabase } from "@/integrations/supabase/client";
-import { SITE_NAME } from "@/lib/site";
+import { DEFAULT_BRANDING, loadSetting, type SiteBranding } from "@/lib/homepage-content";
 
 const NAV = [
   { to: "/tools/qr-code-generator", label: "QR Code" },
@@ -19,17 +20,21 @@ const NAV = [
 export function SiteHeader() {
   const { user } = useAuth();
   const { data: isAdmin } = useIsAdmin();
+  const { data: branding = DEFAULT_BRANDING } = useQuery({
+    queryKey: ["cms", "site_branding"],
+    queryFn: () => loadSetting<SiteBranding>("site_branding", DEFAULT_BRANDING),
+  });
   const showAdmin = isAdmin || isAllowedAdminEmail(user?.email);
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur">
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2 font-semibold text-foreground">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm">
             ◆
           </span>
-          <span>{SITE_NAME}</span>
+          <span className="truncate">{branding.site_name}</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1">
@@ -66,14 +71,10 @@ export function SiteHeader() {
           ) : (
             <>
               <Button asChild variant="ghost" size="sm">
-                <Link to="/auth" search={{ mode: "signin" }}>
-                  Sign in
-                </Link>
+                <Link to="/auth" search={{ mode: "signin" }}>Sign in</Link>
               </Button>
               <Button asChild size="sm">
-                <Link to="/auth" search={{ mode: "signup" }}>
-                  Get started
-                </Link>
+                <Link to="/auth" search={{ mode: "signup" }}>Get started</Link>
               </Button>
             </>
           )}
@@ -96,35 +97,30 @@ export function SiteHeader() {
                 {n.label}
               </Link>
             ))}
-            <div className="mt-2 flex gap-2">
+            <div className="mt-2 flex gap-2 flex-wrap">
               {user ? (
                 <>
                   {showAdmin && (
                     <Button asChild size="sm" variant="outline" className="flex-1">
                       <Link to="/admin" onClick={() => setOpen(false)}>
-                        <Shield className="h-4 w-4 mr-1" />
-                        Admin
+                        <Shield className="h-4 w-4 mr-1" />Admin
                       </Link>
                     </Button>
                   )}
                   <Button asChild size="sm" className="flex-1">
-                    <Link to="/dashboard">Dashboard</Link>
+                    <Link to="/dashboard" onClick={() => setOpen(false)}>Dashboard</Link>
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => supabase.auth.signOut()}>
+                  <Button size="sm" variant="outline" onClick={() => { setOpen(false); supabase.auth.signOut(); }}>
                     Sign out
                   </Button>
                 </>
               ) : (
                 <>
                   <Button asChild size="sm" variant="outline" className="flex-1">
-                    <Link to="/auth" search={{ mode: "signin" }}>
-                      Sign in
-                    </Link>
+                    <Link to="/auth" search={{ mode: "signin" }} onClick={() => setOpen(false)}>Sign in</Link>
                   </Button>
                   <Button asChild size="sm" className="flex-1">
-                    <Link to="/auth" search={{ mode: "signup" }}>
-                      Sign up
-                    </Link>
+                    <Link to="/auth" search={{ mode: "signup" }} onClick={() => setOpen(false)}>Sign up</Link>
                   </Button>
                 </>
               )}

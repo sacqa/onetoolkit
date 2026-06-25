@@ -14,6 +14,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsent } from "@/components/cookie-consent";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
+import { IntegrationsInjector } from "@/components/integrations-injector";
 import { SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 
 function NotFoundComponent() {
@@ -77,22 +79,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: `${SITE_NAME} — ${SITE_DESCRIPTION.split(".")[0]}` },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { title: "OneToolKit — Free online tools for everyday work" },
       { name: "description", content: SITE_DESCRIPTION },
       { name: "author", content: SITE_NAME },
-      { property: "og:site_name", content: SITE_NAME },
-      { property: "og:title", content: SITE_NAME },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "OneToolKit" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { property: "og:site_name", content: "OneToolKit" },
+      { property: "og:title", content: "OneToolKit" },
       { property: "og:description", content: SITE_DESCRIPTION },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "theme-color", content: "#0b1020" },
-      { title: "OneToolKit" },
-      { property: "og:title", content: "OneToolKit" },
       { name: "twitter:title", content: "OneToolKit" },
-      { name: "description", content: "OneToolKit is a free all-in-one online tools platform that helps you generate QR codes, create invoices, convert files, enhance images with AI, make passpor" },
-      { property: "og:description", content: "OneToolKit is a free all-in-one online tools platform that helps you generate QR codes, create invoices, convert files, enhance images with AI, make passpor" },
-      { name: "twitter:description", content: "OneToolKit is a free all-in-one online tools platform that helps you generate QR codes, create invoices, convert files, enhance images with AI, make passpor" },
+      { name: "twitter:description", content: SITE_DESCRIPTION },
+      { name: "theme-color", content: "#2563eb" },
       { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/52c05d49-d268-47be-b479-5aefdaeadf90" },
       { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/52c05d49-d268-47be-b479-5aefdaeadf90" },
     ],
@@ -105,6 +107,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
       },
       { rel: "icon", href: "/favicon.ico" },
+      { rel: "apple-touch-icon", href: "/favicon.ico" },
       { rel: "manifest", href: "/manifest.webmanifest" },
     ],
   }),
@@ -143,7 +146,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <div className="pb-16 md:pb-0">
+        <Outlet />
+      </div>
+      <MobileBottomNav />
+      <IntegrationsInjector />
       <CookieConsent />
       <Toaster richColors position="top-right" />
     </QueryClientProvider>

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Settings as SettingsIcon, DollarSign, Loader2 } from "lucide-react";
+import { Shield, Users, FileText, Settings as SettingsIcon, DollarSign, Loader2, Home, Wrench, Megaphone, BarChart3, Plus, Trash2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,11 @@ import {
   DEFAULT_ADSENSE, DEFAULT_LIMITS, getSetting, setSetting,
   type AdSenseSettings, type LimitsSettings,
 } from "@/lib/app-settings";
+import {
+  DEFAULT_BRANDING, DEFAULT_FEATURES, DEFAULT_HERO, DEFAULT_INTEGRATIONS, DEFAULT_TOOLS,
+  loadSetting, saveSetting,
+  type FeatureItem, type HeroContent, type Integrations, type SiteBranding, type ToolCard,
+} from "@/lib/homepage-content";
 import { SITE_NAME } from "@/lib/site";
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -56,13 +61,21 @@ function AdminPage() {
 
   return (
     <Shell>
-      <Tabs defaultValue="users">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
+      <Tabs defaultValue="homepage">
+        <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/60 p-1">
+          <TabsTrigger value="homepage"><Home className="h-4 w-4 mr-2" />Homepage</TabsTrigger>
+          <TabsTrigger value="tools"><Wrench className="h-4 w-4 mr-2" />Tools</TabsTrigger>
+          <TabsTrigger value="features"><Megaphone className="h-4 w-4 mr-2" />Features</TabsTrigger>
+          <TabsTrigger value="integrations"><BarChart3 className="h-4 w-4 mr-2" />SEO &amp; Analytics</TabsTrigger>
           <TabsTrigger value="users"><Users className="h-4 w-4 mr-2" />Users</TabsTrigger>
-          <TabsTrigger value="content"><FileText className="h-4 w-4 mr-2" />Content</TabsTrigger>
-          <TabsTrigger value="settings"><SettingsIcon className="h-4 w-4 mr-2" />Settings</TabsTrigger>
+          <TabsTrigger value="content"><FileText className="h-4 w-4 mr-2" />Pages</TabsTrigger>
+          <TabsTrigger value="settings"><SettingsIcon className="h-4 w-4 mr-2" />Limits</TabsTrigger>
           <TabsTrigger value="adsense"><DollarSign className="h-4 w-4 mr-2" />AdSense</TabsTrigger>
         </TabsList>
+        <TabsContent value="homepage" className="mt-6"><HomepageTab /></TabsContent>
+        <TabsContent value="tools" className="mt-6"><ToolsTab /></TabsContent>
+        <TabsContent value="features" className="mt-6"><FeaturesTab /></TabsContent>
+        <TabsContent value="integrations" className="mt-6"><IntegrationsTab /></TabsContent>
         <TabsContent value="users" className="mt-6"><UsersTab /></TabsContent>
         <TabsContent value="content" className="mt-6"><ContentTab /></TabsContent>
         <TabsContent value="settings" className="mt-6"><SettingsTab /></TabsContent>
@@ -349,6 +362,235 @@ function AdSenseTab() {
         </p>
         <pre className="mt-3 rounded-lg bg-surface border border-border/60 p-3 text-xs overflow-x-auto">{adsTxt}</pre>
       </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Homepage / Branding / Hero                                          */
+/* ------------------------------------------------------------------ */
+
+function useCmsSetting<T>(key: string, fallback: T) {
+  const qc = useQueryClient();
+  const q = useQuery({
+    queryKey: ["cms", key],
+    queryFn: () => loadSetting<T>(key, fallback),
+  });
+  const m = useMutation({
+    mutationFn: async (value: T) => {
+      const { error } = await saveSetting(key, value);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Saved");
+      qc.invalidateQueries({ queryKey: ["cms", key] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  return { data: q.data ?? fallback, isLoading: q.isLoading, save: m };
+}
+
+function HomepageTab() {
+  const hero = useCmsSetting<HeroContent>("homepage_hero", DEFAULT_HERO);
+  const brand = useCmsSetting<SiteBranding>("site_branding", DEFAULT_BRANDING);
+  const [h, setH] = useState<HeroContent>(hero.data);
+  const [b, setB] = useState<SiteBranding>(brand.data);
+  useEffect(() => setH(hero.data), [hero.data]);
+  useEffect(() => setB(brand.data), [brand.data]);
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-2">
+      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <h2 className="font-semibold">Site branding</h2>
+        <Field label="Site name" value={b.site_name} onChange={(v) => setB({ ...b, site_name: v })} />
+        <Field label="Tagline" value={b.tagline} onChange={(v) => setB({ ...b, tagline: v })} />
+        <Field label="Meta description" value={b.description} onChange={(v) => setB({ ...b, description: v })} textarea />
+        <Field label="Footer tagline" value={b.footer_text} onChange={(v) => setB({ ...b, footer_text: v })} textarea />
+        <Button onClick={() => brand.save.mutate(b)} disabled={brand.save.isPending}>
+          {brand.save.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Save branding
+        </Button>
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <h2 className="font-semibold">Hero banner</h2>
+        <Field label="Badge" value={h.badge} onChange={(v) => setH({ ...h, badge: v })} />
+        <Field label="Title" value={h.title} onChange={(v) => setH({ ...h, title: v })} textarea />
+        <Field label="Subtitle" value={h.subtitle} onChange={(v) => setH({ ...h, subtitle: v })} textarea />
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Primary CTA label" value={h.cta_primary_label} onChange={(v) => setH({ ...h, cta_primary_label: v })} />
+          <Field label="Primary CTA link" value={h.cta_primary_href} onChange={(v) => setH({ ...h, cta_primary_href: v })} />
+          <Field label="Secondary CTA label" value={h.cta_secondary_label} onChange={(v) => setH({ ...h, cta_secondary_label: v })} />
+          <Field label="Secondary CTA link" value={h.cta_secondary_href} onChange={(v) => setH({ ...h, cta_secondary_href: v })} />
+        </div>
+        <Button onClick={() => hero.save.mutate(h)} disabled={hero.save.isPending}>
+          {hero.save.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Save hero
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function ToolsTab() {
+  const { data, save } = useCmsSetting<ToolCard[]>("homepage_tools", DEFAULT_TOOLS);
+  const [items, setItems] = useState<ToolCard[]>(data);
+  useEffect(() => setItems(data), [data]);
+
+  const update = (i: number, patch: Partial<ToolCard>) =>
+    setItems(items.map((t, idx) => (idx === i ? { ...t, ...patch } : t)));
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="font-semibold">Tool cards ({items.length})</h2>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              setItems([
+                ...items,
+                { slug: `new-${Date.now()}`, name: "New tool", blurb: "Describe this tool.", category: "Other", href: "/", icon: "Star", live: false, order: items.length + 1 },
+              ])
+            }
+          >
+            <Plus className="h-4 w-4 mr-1" />Add
+          </Button>
+          <Button size="sm" onClick={() => save.mutate(items)} disabled={save.isPending}>
+            {save.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Save all
+          </Button>
+        </div>
+      </div>
+
+      <div className="grid gap-3">
+        {items.map((t, i) => (
+          <div key={i} className="rounded-xl border border-border bg-card p-4 grid gap-3 md:grid-cols-12 items-end">
+            <Field className="md:col-span-3" label="Name" value={t.name} onChange={(v) => update(i, { name: v })} />
+            <Field className="md:col-span-4" label="Blurb" value={t.blurb} onChange={(v) => update(i, { blurb: v })} />
+            <Field className="md:col-span-2" label="Category" value={t.category} onChange={(v) => update(i, { category: v })} />
+            <Field className="md:col-span-2" label="Href" value={t.href} onChange={(v) => update(i, { href: v })} />
+            <Field className="md:col-span-1" label="Icon" value={t.icon} onChange={(v) => update(i, { icon: v })} />
+            <div className="md:col-span-12 flex items-center gap-4 pt-2">
+              <label className="flex items-center gap-2 text-sm">
+                <Switch checked={t.live} onCheckedChange={(v) => update(i, { live: v })} /> Live
+              </label>
+              <label className="flex items-center gap-2 text-sm">
+                Order
+                <Input
+                  type="number"
+                  value={t.order}
+                  onChange={(e) => update(i, { order: Number(e.target.value) })}
+                  className="w-20"
+                />
+              </label>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="ml-auto text-destructive"
+                onClick={() => setItems(items.filter((_, idx) => idx !== i))}
+              >
+                <Trash2 className="h-4 w-4 mr-1" />Remove
+              </Button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function FeaturesTab() {
+  const { data, save } = useCmsSetting<FeatureItem[]>("homepage_features", DEFAULT_FEATURES);
+  const [items, setItems] = useState<FeatureItem[]>(data);
+  useEffect(() => setItems(data), [data]);
+  const update = (i: number, patch: Partial<FeatureItem>) =>
+    setItems(items.map((t, idx) => (idx === i ? { ...t, ...patch } : t)));
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="font-semibold">Feature highlights</h2>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => setItems([...items, { icon: "Star", title: "New", body: "Describe." }])}>
+            <Plus className="h-4 w-4 mr-1" />Add
+          </Button>
+          <Button size="sm" onClick={() => save.mutate(items)} disabled={save.isPending}>
+            {save.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Save all
+          </Button>
+        </div>
+      </div>
+      <div className="grid gap-3">
+        {items.map((f, i) => (
+          <div key={i} className="rounded-xl border border-border bg-card p-4 grid gap-3 md:grid-cols-12 items-end">
+            <Field className="md:col-span-2" label="Icon" value={f.icon} onChange={(v) => update(i, { icon: v })} />
+            <Field className="md:col-span-3" label="Title" value={f.title} onChange={(v) => update(i, { title: v })} />
+            <Field className="md:col-span-6" label="Body" value={f.body} onChange={(v) => update(i, { body: v })} textarea />
+            <Button size="sm" variant="ghost" className="md:col-span-1 text-destructive" onClick={() => setItems(items.filter((_, idx) => idx !== i))}>
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function IntegrationsTab() {
+  const { data, save } = useCmsSetting<Integrations>("integrations", DEFAULT_INTEGRATIONS);
+  const [v, setV] = useState<Integrations>(data);
+  useEffect(() => setV(data), [data]);
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-2">
+      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <div>
+          <h2 className="font-semibold">Google Analytics 4</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Paste your Measurement ID (e.g. <code className="text-xs">G-XXXXXXXXXX</code>). GA only loads after a visitor accepts cookies.
+          </p>
+        </div>
+        <Field label="GA4 Measurement ID" value={v.ga_measurement_id} onChange={(x) => setV({ ...v, ga_measurement_id: x })} placeholder="G-XXXXXXXXXX" />
+      </div>
+
+      <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+        <div>
+          <h2 className="font-semibold">Google Search Console</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Paste the <code className="text-xs">content</code> value from Google's HTML-tag verification method.
+          </p>
+        </div>
+        <Field label="Verification token" value={v.gsc_verification} onChange={(x) => setV({ ...v, gsc_verification: x })} placeholder="abc123…" />
+        <p className="text-xs text-muted-foreground">
+          Sitemap: <a href="/sitemap.xml" className="underline">/sitemap.xml</a> · Robots: <a href="/robots.txt" className="underline">/robots.txt</a>
+        </p>
+      </div>
+
+      <div className="lg:col-span-2">
+        <Button onClick={() => save.mutate(v)} disabled={save.isPending}>
+          {save.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Save integrations
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function Field({
+  label, value, onChange, textarea, placeholder, className,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  textarea?: boolean;
+  placeholder?: string;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <Label className="text-xs uppercase tracking-wider text-muted-foreground">{label}</Label>
+      {textarea ? (
+        <Textarea className="mt-1.5" rows={3} value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
+      ) : (
+        <Input className="mt-1.5" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
+      )}
     </div>
   );
 }
