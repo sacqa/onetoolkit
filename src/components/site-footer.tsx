@@ -1,19 +1,25 @@
 import { Link } from "@tanstack/react-router";
-import { SITE_NAME } from "@/lib/site";
+import { useQuery } from "@tanstack/react-query";
+import { DEFAULT_BRANDING, loadSetting, type SiteBranding } from "@/lib/homepage-content";
 
 export function SiteFooter() {
+  const { data: branding = DEFAULT_BRANDING } = useQuery({
+    queryKey: ["cms", "site_branding"],
+    queryFn: () => loadSetting<SiteBranding>("site_branding", DEFAULT_BRANDING),
+  });
+
   return (
     <footer className="border-t border-border/60 bg-surface">
       <div className="container-page py-12 grid gap-8 md:grid-cols-4 text-sm">
         <div>
-          <div className="font-semibold text-foreground">{SITE_NAME}</div>
-          <p className="mt-2 text-muted-foreground">
-            Free, fast, no-fluff tools for everyday work. Built for the modern web.
-          </p>
+          <div className="font-semibold text-foreground">{branding.site_name}</div>
+          <p className="mt-2 text-muted-foreground">{branding.footer_text}</p>
         </div>
         <FooterCol title="Tools" links={[
           ["/tools/qr-code-generator", "QR Code"],
           ["/tools/invoice-generator", "Invoice Generator"],
+          ["/tools/image-compressor", "Image Compressor"],
+          ["/tools/currency-converter", "Currency Converter"],
         ]} />
         <FooterCol title="Company" links={[
           ["/about", "About"],
@@ -27,7 +33,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-border/60">
         <div className="container-page py-4 text-xs text-muted-foreground">
-          © {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
+          © {new Date().getFullYear()} {branding.site_name}. All rights reserved.
         </div>
       </div>
     </footer>
