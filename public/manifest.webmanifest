@@ -10,7 +10,8 @@
   "theme_color": "#6d28d9",
   "categories": ["productivity", "utilities"],
   "icons": [
-    { "src": "/__l5e/assets-v1/98497823-0dec-40da-b7fb-abe20c532581/onetoolkit-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/__l5e/assets-v1/98497823-0dec-40da-b7fb-abe20c532581/onetoolkit-logo.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" }
+    { "src": "/__l5e/assets-v1/fe6185c9-9876-4e5b-b977-be441dc24517/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/__l5e/assets-v1/0eebab57-246f-47f0-b730-c858d15426d5/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/__l5e/assets-v1/ba8cce96-d173-45ef-a638-c9e05c23085b/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
