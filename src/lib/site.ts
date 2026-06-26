@@ -1,7 +1,7 @@
-export const SITE_NAME = "ToolHub";
-export const SITE_TAGLINE = "Free online tools for every workflow";
+export const SITE_NAME = "One Tool Kit";
+export const SITE_TAGLINE = "Ten essential tools, one beautiful workspace";
 export const SITE_DESCRIPTION =
-  "ToolHub is a free utility toolkit with a QR generator, invoice maker, PDF/Word converter, AI image upscaler, passport photo maker, image compressor and live currency converter. No signup required for most tools.";
+  "One Tool Kit is a free utility suite with a QR generator, invoice maker, PDF/Word converter, AI image upscaler, passport photo maker, image compressor and live currency converter. No signup required for most tools.";
 
 export const TOOLS = [
   {

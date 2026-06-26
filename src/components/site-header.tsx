@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { isAllowedAdminEmail, useIsAdmin } from "@/hooks/use-role";
 import { supabase } from "@/integrations/supabase/client";
 import { DEFAULT_BRANDING, loadSetting, type SiteBranding } from "@/lib/homepage-content";
+import logoAsset from "@/assets/onetoolkit-logo.png.asset.json";
 
 const NAV = [
   { to: "/tools/qr-code-generator", label: "QR Code" },
@@ -31,9 +32,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur">
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2 font-semibold text-foreground">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm">
-            ◆
-          </span>
+          <img src={logoAsset.url} alt="One Tool Kit" className="h-9 w-9 rounded-lg object-cover shadow-sm" />
           <span className="truncate">{branding.site_name}</span>
         </Link>
 
