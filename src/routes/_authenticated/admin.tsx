@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Settings as SettingsIcon, DollarSign, Loader2, Home, Wrench, Megaphone, BarChart3, Plus, Trash2 } from "lucide-react";
+import { Shield, Users, FileText, Settings as SettingsIcon, DollarSign, Loader2, Home, Wrench, Megaphone, BarChart3, Plus, Trash2, type LucideIcon } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-role";
 import { updateUserRole } from "@/lib/admin.functions";
@@ -38,8 +37,22 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
+type SectionKey = "homepage" | "tools" | "features" | "integrations" | "users" | "content" | "settings" | "adsense";
+
+const SECTIONS: { key: SectionKey; label: string; icon: LucideIcon; desc: string }[] = [
+  { key: "homepage", label: "Homepage", icon: Home, desc: "Branding, hero banner and CTAs" },
+  { key: "tools", label: "Tool cards", icon: Wrench, desc: "Tiles shown on the homepage grid" },
+  { key: "features", label: "Features", icon: Megaphone, desc: "Three feature highlights" },
+  { key: "integrations", label: "SEO & Analytics", icon: BarChart3, desc: "GA4 + Search Console" },
+  { key: "users", label: "Users", icon: Users, desc: "Manage roles and accounts" },
+  { key: "content", label: "Pages", icon: FileText, desc: "About, Privacy, Terms…" },
+  { key: "settings", label: "Limits", icon: SettingsIcon, desc: "Per-tool usage caps" },
+  { key: "adsense", label: "AdSense", icon: DollarSign, desc: "Publisher ID and ad slots" },
+];
+
 function AdminPage() {
   const { data: isAdmin, isLoading: roleLoading } = useIsAdmin();
+  const [active, setActive] = useState<SectionKey>("homepage");
 
   if (roleLoading) {
     return <Shell><div className="text-muted-foreground">Checking permissions…</div></Shell>;
@@ -59,44 +72,74 @@ function AdminPage() {
     );
   }
 
+  const current = SECTIONS.find((s) => s.key === active)!;
+
   return (
     <Shell>
-      <Tabs defaultValue="homepage">
-        <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/60 p-1">
-          <TabsTrigger value="homepage"><Home className="h-4 w-4 mr-2" />Homepage</TabsTrigger>
-          <TabsTrigger value="tools"><Wrench className="h-4 w-4 mr-2" />Tools</TabsTrigger>
-          <TabsTrigger value="features"><Megaphone className="h-4 w-4 mr-2" />Features</TabsTrigger>
-          <TabsTrigger value="integrations"><BarChart3 className="h-4 w-4 mr-2" />SEO &amp; Analytics</TabsTrigger>
-          <TabsTrigger value="users"><Users className="h-4 w-4 mr-2" />Users</TabsTrigger>
-          <TabsTrigger value="content"><FileText className="h-4 w-4 mr-2" />Pages</TabsTrigger>
-          <TabsTrigger value="settings"><SettingsIcon className="h-4 w-4 mr-2" />Limits</TabsTrigger>
-          <TabsTrigger value="adsense"><DollarSign className="h-4 w-4 mr-2" />AdSense</TabsTrigger>
-        </TabsList>
-        <TabsContent value="homepage" className="mt-6"><HomepageTab /></TabsContent>
-        <TabsContent value="tools" className="mt-6"><ToolsTab /></TabsContent>
-        <TabsContent value="features" className="mt-6"><FeaturesTab /></TabsContent>
-        <TabsContent value="integrations" className="mt-6"><IntegrationsTab /></TabsContent>
-        <TabsContent value="users" className="mt-6"><UsersTab /></TabsContent>
-        <TabsContent value="content" className="mt-6"><ContentTab /></TabsContent>
-        <TabsContent value="settings" className="mt-6"><SettingsTab /></TabsContent>
-        <TabsContent value="adsense" className="mt-6"><AdSenseTab /></TabsContent>
-      </Tabs>
+      <div className="grid gap-6 lg:grid-cols-[260px,1fr]">
+        {/* Sidebar */}
+        <aside className="lg:sticky lg:top-20 self-start">
+          <nav className="rounded-2xl border border-border bg-card p-2 space-y-0.5">
+            {SECTIONS.map((s) => {
+              const Icon = s.icon;
+              const isActive = active === s.key;
+              return (
+                <button
+                  key={s.key}
+                  onClick={() => setActive(s.key)}
+                  className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-left transition-colors ${
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-foreground/80 hover:bg-muted"
+                  }`}
+                >
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span className="truncate">{s.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </aside>
+
+        {/* Content */}
+        <section className="min-w-0">
+          <div className="mb-6">
+            <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
+              <Shield className="h-3.5 w-3.5" />
+              <span>Admin</span>
+              <span>›</span>
+              <span>{current.label}</span>
+            </div>
+            <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">{current.label}</h2>
+            <p className="text-sm text-muted-foreground">{current.desc}</p>
+          </div>
+
+          {active === "homepage" && <HomepageTab />}
+          {active === "tools" && <ToolsTab />}
+          {active === "features" && <FeaturesTab />}
+          {active === "integrations" && <IntegrationsTab />}
+          {active === "users" && <UsersTab />}
+          {active === "content" && <ContentTab />}
+          {active === "settings" && <SettingsTab />}
+          {active === "adsense" && <AdSenseTab />}
+        </section>
+      </div>
     </Shell>
   );
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-muted/30">
       <SiteHeader />
-      <main className="flex-1 container-page py-10">
+      <main className="flex-1 container-page py-8 sm:py-10">
         <div className="flex items-center gap-3 mb-8">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-500 text-white shadow-md">
             <Shield className="h-5 w-5" />
           </span>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Admin</h1>
-            <p className="text-sm text-muted-foreground">Manage users, content, limits and ad slots.</p>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Admin dashboard</h1>
+            <p className="text-sm text-muted-foreground">Everything you need to run One Tool Kit.</p>
           </div>
         </div>
         {children}

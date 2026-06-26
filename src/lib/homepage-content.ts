@@ -68,11 +68,11 @@ export const DEFAULT_FEATURES: FeatureItem[] = [
 ];
 
 export const DEFAULT_BRANDING: SiteBranding = {
-  site_name: "OneToolKit",
-  tagline: "Free online tools for every workflow",
+  site_name: "One Tool Kit",
+  tagline: "Ten essential tools, one beautiful workspace",
   description:
-    "OneToolKit is a free toolkit with a QR generator, invoice maker, image compressor, passport photo maker and live currency converter.",
-  footer_text: "Free, fast, no-fluff tools for everyday work.",
+    "One Tool Kit is a free toolkit with a QR generator, invoice maker, image compressor, passport photo maker, AI upscaler and live currency converter.",
+  footer_text: "Ten essential tools, one beautiful workspace.",
 };
 
 export const DEFAULT_INTEGRATIONS: Integrations = {
