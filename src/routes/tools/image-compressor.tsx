@@ -94,6 +94,7 @@ function ImageCompressorPage() {
             ...updated[i],
             status: "done",
             blob,
+            outUrl: URL.createObjectURL(blob),
             outSize: blob.size,
             outName: `${base}-min.${ext}`,
           };
