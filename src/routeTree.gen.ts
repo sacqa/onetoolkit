@@ -19,6 +19,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ToolsQrCodeGeneratorRouteImport } from './routes/tools/qr-code-generator'
+import { Route as ToolsPdfToJpgRouteImport } from './routes/tools/pdf-to-jpg'
 import { Route as ToolsPassportPhotoRouteImport } from './routes/tools/passport-photo'
 import { Route as ToolsInvoiceGeneratorRouteImport } from './routes/tools/invoice-generator'
 import { Route as ToolsImageCompressorRouteImport } from './routes/tools/image-compressor'
@@ -75,6 +76,11 @@ const ToolsQrCodeGeneratorRoute = ToolsQrCodeGeneratorRouteImport.update({
   path: '/tools/qr-code-generator',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsPdfToJpgRoute = ToolsPdfToJpgRouteImport.update({
+  id: '/tools/pdf-to-jpg',
+  path: '/tools/pdf-to-jpg',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToolsPassportPhotoRoute = ToolsPassportPhotoRouteImport.update({
   id: '/tools/passport-photo',
   path: '/tools/passport-photo',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
+  '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
 }
 export interface FileRoutesByTo {
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
+  '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
 }
 export interface FileRoutesById {
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
+  '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
 }
 export interface FileRouteTypes {
@@ -176,6 +185,7 @@ export interface FileRouteTypes {
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
+    | '/tools/pdf-to-jpg'
     | '/tools/qr-code-generator'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
+    | '/tools/pdf-to-jpg'
     | '/tools/qr-code-generator'
   id:
     | '__root__'
@@ -211,6 +222,7 @@ export interface FileRouteTypes {
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
+    | '/tools/pdf-to-jpg'
     | '/tools/qr-code-generator'
   fileRoutesById: FileRoutesById
 }
@@ -228,6 +240,7 @@ export interface RootRouteChildren {
   ToolsImageCompressorRoute: typeof ToolsImageCompressorRoute
   ToolsInvoiceGeneratorRoute: typeof ToolsInvoiceGeneratorRoute
   ToolsPassportPhotoRoute: typeof ToolsPassportPhotoRoute
+  ToolsPdfToJpgRoute: typeof ToolsPdfToJpgRoute
   ToolsQrCodeGeneratorRoute: typeof ToolsQrCodeGeneratorRoute
 }
 
@@ -303,6 +316,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsQrCodeGeneratorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/pdf-to-jpg': {
+      id: '/tools/pdf-to-jpg'
+      path: '/tools/pdf-to-jpg'
+      fullPath: '/tools/pdf-to-jpg'
+      preLoaderRoute: typeof ToolsPdfToJpgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools/passport-photo': {
       id: '/tools/passport-photo'
       path: '/tools/passport-photo'
@@ -375,6 +395,7 @@ const rootRouteChildren: RootRouteChildren = {
   ToolsImageCompressorRoute: ToolsImageCompressorRoute,
   ToolsInvoiceGeneratorRoute: ToolsInvoiceGeneratorRoute,
   ToolsPassportPhotoRoute: ToolsPassportPhotoRoute,
+  ToolsPdfToJpgRoute: ToolsPdfToJpgRoute,
   ToolsQrCodeGeneratorRoute: ToolsQrCodeGeneratorRoute,
 }
 export const routeTree = rootRouteImport
