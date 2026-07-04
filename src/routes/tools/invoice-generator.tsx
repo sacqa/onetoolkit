@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Plus, Trash2, Download, Save } from "lucide-react";
+import { Plus, Trash2, Download, Save, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -54,7 +54,10 @@ function InvoiceTool() {
   ]);
   const [discount, setDiscount] = useState(0);
   const [notes, setNotes] = useState("Thank you for your business!");
+  const [logo, setLogo] = useState<string | null>(null);
+  const [accentColor, setAccentColor] = useState<string>(TEMPLATE_ACCENTS.modern);
   const [saving, setSaving] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   const totals = useMemo(() => {
     const subtotal = items.reduce((s, i) => s + i.qty * i.price, 0);
@@ -72,15 +75,20 @@ function InvoiceTool() {
   const fmt = (n: number) => n.toLocaleString(undefined, { style: "currency", currency });
 
   function downloadPdf() {
-    const accent = TEMPLATE_ACCENTS[template];
+    const accent = accentColor || TEMPLATE_ACCENTS[template];
     const doc = new jsPDF({ unit: "pt", format: "a4" });
-    doc.setFontSize(22).setTextColor(accent).text("INVOICE", 40, 60);
-    doc.setFontSize(10).setTextColor("#111").text(number, 40, 80);
+
+    if (logo) {
+      try { doc.addImage(logo, "PNG", 40, 40, 70, 70, undefined, "FAST"); } catch { /* ignore bad image */ }
+    }
+    doc.setFontSize(22).setTextColor(accent).text("INVOICE", logo ? 130 : 40, 60);
+    doc.setFontSize(10).setTextColor("#111").text(number, logo ? 130 : 40, 80);
 
     doc.setFontSize(10).setTextColor("#555");
     doc.text(business.name, 555, 60, { align: "right" });
     doc.text(business.email, 555, 75, { align: "right" });
     if (business.phone) doc.text(business.phone, 555, 90, { align: "right" });
+    if (business.address) doc.text(business.address, 555, 105, { align: "right" });
 
     doc.setTextColor("#111").setFontSize(11).text("Bill to", 40, 130);
     doc.setFontSize(10).setTextColor("#555")
@@ -194,7 +202,40 @@ function InvoiceTool() {
               </section>
 
               <section className="rounded-2xl border border-border bg-card p-6">
-                <h2 className="font-semibold mb-4">From</h2>
+                <h2 className="font-semibold mb-4">Brand</h2>
+                <div className="grid sm:grid-cols-2 gap-4 items-start">
+                  <div>
+                    <Label>Company logo</Label>
+                    {logo ? (
+                      <div className="mt-1.5 flex items-center gap-3">
+                        <img src={logo} alt="Logo" className="h-16 w-16 rounded-lg border border-border object-contain bg-white p-1" />
+                        <Button size="sm" variant="ghost" onClick={() => setLogo(null)}><X className="h-4 w-4 mr-1" />Remove</Button>
+                      </div>
+                    ) : (
+                      <button type="button" onClick={() => logoInputRef.current?.click()}
+                        className="mt-1.5 w-full rounded-lg border-2 border-dashed border-border hover:border-primary/50 p-3 text-sm text-muted-foreground flex items-center justify-center gap-2">
+                        <Upload className="h-4 w-4" /> Upload logo
+                      </button>
+                    )}
+                    <input ref={logoInputRef} type="file" accept="image/png,image/jpeg" className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0]; e.target.value = "";
+                        if (!f) return;
+                        if (f.size > 2 * 1024 * 1024) return toast.error("Logo must be under 2MB");
+                        const r = new FileReader();
+                        r.onload = () => setLogo(r.result as string);
+                        r.readAsDataURL(f);
+                      }} />
+                  </div>
+                  <div>
+                    <Label>Accent color</Label>
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <input type="color" value={accentColor} onChange={(e) => setAccentColor(e.target.value)} className="h-9 w-12 rounded border border-input" />
+                      <Input value={accentColor} onChange={(e) => setAccentColor(e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+                <h3 className="font-medium mt-6 mb-3">From</h3>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <F label="Business name" value={business.name} onChange={(v) => setBusiness({ ...business, name: v })} />
                   <F label="Email" value={business.email} onChange={(v) => setBusiness({ ...business, email: v })} />
@@ -274,11 +315,14 @@ function InvoiceTool() {
             {/* PREVIEW */}
             <aside className="lg:sticky lg:top-20 h-fit">
               <div className="rounded-2xl border border-border bg-card overflow-hidden">
-                <div className="p-8" style={{ borderTop: `4px solid ${TEMPLATE_ACCENTS[template]}` }}>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="text-2xl font-bold" style={{ color: TEMPLATE_ACCENTS[template] }}>INVOICE</div>
-                      <div className="text-sm text-muted-foreground mt-1">{number}</div>
+                <div className="p-8" style={{ borderTop: `4px solid ${accentColor || TEMPLATE_ACCENTS[template]}` }}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      {logo && <img src={logo} alt="Logo" className="h-16 w-16 rounded object-contain bg-white border border-border p-1" />}
+                      <div>
+                        <div className="text-2xl font-bold" style={{ color: accentColor || TEMPLATE_ACCENTS[template] }}>INVOICE</div>
+                        <div className="text-sm text-muted-foreground mt-1">{number}</div>
+                      </div>
                     </div>
                     <div className="text-right text-sm">
                       <div className="font-medium">{business.name}</div>

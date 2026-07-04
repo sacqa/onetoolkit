@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import {
-  ArrowRight, QrCode, FileText, FileType2, Sparkles, IdCard, ImageDown, DollarSign,
+  ArrowRight, QrCode, FileText, FileType2, FileImage, Sparkles, IdCard, ImageDown, DollarSign,
   Zap, Shield, Smartphone, Search, Star, type LucideIcon,
 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
 });
 
 const ICONS: Record<string, LucideIcon> = {
-  QrCode, FileText, FileType2, Sparkles, IdCard, ImageDown, DollarSign,
+  QrCode, FileText, FileType2, FileImage, Sparkles, IdCard, ImageDown, DollarSign,
   Zap, Shield, Smartphone, Star,
 };
 

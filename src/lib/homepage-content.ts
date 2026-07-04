@@ -57,8 +57,8 @@ export const DEFAULT_TOOLS: ToolCard[] = [
   { slug: "image-compressor", name: "Image Compressor", blurb: "Shrink JPG, PNG and WEBP images in your browser.", category: "Image", href: "/tools/image-compressor", icon: "ImageDown", live: true, order: 3 },
   { slug: "passport-photo", name: "Passport Photo Maker", blurb: "Crop and arrange passport-size photos for 10+ countries.", category: "Image", href: "/tools/passport-photo", icon: "IdCard", live: true, order: 4 },
   { slug: "currency-converter", name: "Currency Converter", blurb: "Live exchange rates for 30+ currencies.", category: "Other", href: "/tools/currency-converter", icon: "DollarSign", live: true, order: 5 },
-  { slug: "pdf-word-converter", name: "PDF ↔ Word", blurb: "Convert between PDF and Word while keeping formatting.", category: "PDF", href: "/tools/pdf-word-converter", icon: "FileType2", live: false, order: 6 },
-  { slug: "image-upscaler", name: "AI Image Upscaler", blurb: "Upscale photos 2× or 4× with AI.", category: "AI Write", href: "/tools/image-upscaler", icon: "Sparkles", live: false, order: 7 },
+  { slug: "pdf-to-jpg", name: "PDF to JPG", blurb: "Convert each page of a PDF to a high-quality JPG image.", category: "PDF", href: "/tools/pdf-to-jpg", icon: "FileImage", live: true, order: 6 },
+  { slug: "image-upscaler", name: "AI Image Upscaler", blurb: "Enhance and upscale photos with AI. 2× sharper detail.", category: "AI Write", href: "/tools/image-upscaler", icon: "Sparkles", live: true, order: 7 },
 ];
 
 export const DEFAULT_FEATURES: FeatureItem[] = [

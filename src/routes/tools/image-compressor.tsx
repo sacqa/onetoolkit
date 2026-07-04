@@ -28,8 +28,10 @@ export const Route = createFileRoute("/tools/image-compressor")({
 type Item = {
   id: string;
   file: File;
+  originalUrl: string;
   originalSize: number;
   blob?: Blob;
+  outUrl?: string;
   outName?: string;
   outSize?: number;
   status: "pending" | "working" | "done" | "error";
@@ -40,6 +42,7 @@ const fmt = (b: number) => (b < 1024 ? `${b} B` : b < 1048576 ? `${(b / 1024).to
 
 function ImageCompressorPage() {
   const [items, setItems] = useState<Item[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [quality, setQuality] = useState(75);
   const [maxWidth, setMaxWidth] = useState(2048);
   const [format, setFormat] = useState<"keep" | "image/jpeg" | "image/webp" | "image/png">("keep");
@@ -57,10 +60,15 @@ function ImageCompressorPage() {
     const next: Item[] = [];
     for (const f of Array.from(files)) {
       if (!f.type.startsWith("image/")) continue;
-      next.push({ id: crypto.randomUUID(), file: f, originalSize: f.size, status: "pending" });
+      if (f.size > 25 * 1024 * 1024) { toast.error(`${f.name} exceeds 25MB`); continue; }
+      next.push({ id: crypto.randomUUID(), file: f, originalUrl: URL.createObjectURL(f), originalSize: f.size, status: "pending" });
     }
-    setItems((p) => [...p, ...next]);
-  }, []);
+    setItems((p) => {
+      const merged = [...p, ...next];
+      if (!selectedId && merged.length) setSelectedId(merged[0].id);
+      return merged;
+    });
+  }, [selectedId]);
 
   const compressAll = async () => {
     if (items.length === 0) return;
@@ -86,6 +94,7 @@ function ImageCompressorPage() {
             ...updated[i],
             status: "done",
             blob,
+            outUrl: URL.createObjectURL(blob),
             outSize: blob.size,
             outName: `${base}-min.${ext}`,
           };
@@ -159,33 +168,71 @@ function ImageCompressorPage() {
               />
             </div>
 
-            {items.length > 0 && (
-              <div className="rounded-2xl border border-border bg-card divide-y divide-border">
-                {items.map((it) => (
-                  <div key={it.id} className="flex items-center gap-3 p-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="truncate font-medium text-sm">{it.file.name}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {fmt(it.originalSize)}
-                        {it.outSize != null && (
-                          <> → <span className="text-success">{fmt(it.outSize)}</span> ({Math.max(0, Math.round((1 - it.outSize / it.originalSize) * 100))}% saved)</>
-                        )}
-                        {it.error && <span className="text-destructive"> · {it.error}</span>}
+            {items.length > 0 && (() => {
+              const selected = items.find((i) => i.id === selectedId) ?? items[0];
+              return (
+                <>
+                  <div className="rounded-2xl border border-border bg-card overflow-hidden">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 divide-x divide-border">
+                      <div className="p-3">
+                        <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-2">Original · {fmt(selected.originalSize)}</div>
+                        <div className="aspect-video bg-surface rounded-lg overflow-hidden flex items-center justify-center">
+                          <img src={selected.originalUrl} alt="Original" className="max-h-full max-w-full object-contain" />
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-2">
+                          Compressed {selected.outSize != null && <>· <span className="text-success">{fmt(selected.outSize)}</span> ({Math.max(0, Math.round((1 - selected.outSize / selected.originalSize) * 100))}% saved)</>}
+                        </div>
+                        <div className="aspect-video bg-surface rounded-lg overflow-hidden flex items-center justify-center">
+                          {selected.outUrl ? (
+                            <img src={selected.outUrl} alt="Compressed" className="max-h-full max-w-full object-contain" />
+                          ) : (
+                            <span className="text-xs text-muted-foreground">Run compression to preview</span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    {it.status === "working" && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
-                    {it.status === "done" && (
-                      <Button size="sm" variant="outline" onClick={() => downloadOne(it)}>
-                        <Download className="h-3.5 w-3.5" />
-                      </Button>
-                    )}
-                    <Button size="sm" variant="ghost" onClick={() => setItems((p) => p.filter((x) => x.id !== it.id))}>
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </Button>
                   </div>
-                ))}
-              </div>
-            )}
+
+                  <div className="rounded-2xl border border-border bg-card divide-y divide-border">
+                    {items.map((it) => (
+                      <div key={it.id}
+                        onClick={() => setSelectedId(it.id)}
+                        className={`flex items-center gap-3 p-3 cursor-pointer ${selectedId === it.id ? "bg-primary/5" : "hover:bg-muted/40"}`}>
+                        <img src={it.originalUrl} alt="" className="h-10 w-10 rounded object-cover border border-border" />
+                        <div className="flex-1 min-w-0">
+                          <div className="truncate font-medium text-sm">{it.file.name}</div>
+                          <div className="text-xs text-muted-foreground">
+                            {fmt(it.originalSize)}
+                            {it.outSize != null && (
+                              <> → <span className="text-success">{fmt(it.outSize)}</span> ({Math.max(0, Math.round((1 - it.outSize / it.originalSize) * 100))}% saved)</>
+                            )}
+                            {it.error && <span className="text-destructive"> · {it.error}</span>}
+                          </div>
+                        </div>
+                        {it.status === "working" && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+                        {it.status === "done" && (
+                          <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); downloadOne(it); }}>
+                            <Download className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                        <Button size="sm" variant="ghost" onClick={(e) => {
+                          e.stopPropagation();
+                          setItems((p) => {
+                            const removed = p.find((x) => x.id === it.id);
+                            if (removed) { URL.revokeObjectURL(removed.originalUrl); if (removed.outUrl) URL.revokeObjectURL(removed.outUrl); }
+                            return p.filter((x) => x.id !== it.id);
+                          });
+                        }}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              );
+            })()}
           </div>
 
           <aside className="space-y-5 rounded-2xl border border-border bg-card p-5 h-fit lg:sticky lg:top-20">
