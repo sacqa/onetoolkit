@@ -202,7 +202,40 @@ function InvoiceTool() {
               </section>
 
               <section className="rounded-2xl border border-border bg-card p-6">
-                <h2 className="font-semibold mb-4">From</h2>
+                <h2 className="font-semibold mb-4">Brand</h2>
+                <div className="grid sm:grid-cols-2 gap-4 items-start">
+                  <div>
+                    <Label>Company logo</Label>
+                    {logo ? (
+                      <div className="mt-1.5 flex items-center gap-3">
+                        <img src={logo} alt="Logo" className="h-16 w-16 rounded-lg border border-border object-contain bg-white p-1" />
+                        <Button size="sm" variant="ghost" onClick={() => setLogo(null)}><X className="h-4 w-4 mr-1" />Remove</Button>
+                      </div>
+                    ) : (
+                      <button type="button" onClick={() => logoInputRef.current?.click()}
+                        className="mt-1.5 w-full rounded-lg border-2 border-dashed border-border hover:border-primary/50 p-3 text-sm text-muted-foreground flex items-center justify-center gap-2">
+                        <Upload className="h-4 w-4" /> Upload logo
+                      </button>
+                    )}
+                    <input ref={logoInputRef} type="file" accept="image/png,image/jpeg" className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0]; e.target.value = "";
+                        if (!f) return;
+                        if (f.size > 2 * 1024 * 1024) return toast.error("Logo must be under 2MB");
+                        const r = new FileReader();
+                        r.onload = () => setLogo(r.result as string);
+                        r.readAsDataURL(f);
+                      }} />
+                  </div>
+                  <div>
+                    <Label>Accent color</Label>
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <input type="color" value={accentColor} onChange={(e) => setAccentColor(e.target.value)} className="h-9 w-12 rounded border border-input" />
+                      <Input value={accentColor} onChange={(e) => setAccentColor(e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+                <h3 className="font-medium mt-6 mb-3">From</h3>
                 <div className="grid sm:grid-cols-2 gap-3">
                   <F label="Business name" value={business.name} onChange={(v) => setBusiness({ ...business, name: v })} />
                   <F label="Email" value={business.email} onChange={(v) => setBusiness({ ...business, email: v })} />
