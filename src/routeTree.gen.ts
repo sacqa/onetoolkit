@@ -22,6 +22,7 @@ import { Route as ToolsQrCodeGeneratorRouteImport } from './routes/tools/qr-code
 import { Route as ToolsPdfToJpgRouteImport } from './routes/tools/pdf-to-jpg'
 import { Route as ToolsPassportPhotoRouteImport } from './routes/tools/passport-photo'
 import { Route as ToolsInvoiceGeneratorRouteImport } from './routes/tools/invoice-generator'
+import { Route as ToolsImageUpscalerRouteImport } from './routes/tools/image-upscaler'
 import { Route as ToolsImageCompressorRouteImport } from './routes/tools/image-compressor'
 import { Route as ToolsCurrencyConverterRouteImport } from './routes/tools/currency-converter'
 import { Route as ApiUpscaleImageRouteImport } from './routes/api/upscale-image'
@@ -92,6 +93,11 @@ const ToolsInvoiceGeneratorRoute = ToolsInvoiceGeneratorRouteImport.update({
   path: '/tools/invoice-generator',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsImageUpscalerRoute = ToolsImageUpscalerRouteImport.update({
+  id: '/tools/image-upscaler',
+  path: '/tools/image-upscaler',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToolsImageCompressorRoute = ToolsImageCompressorRouteImport.update({
   id: '/tools/image-compressor',
   path: '/tools/image-compressor',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/api/upscale-image': typeof ApiUpscaleImageRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
+  '/tools/image-upscaler': typeof ToolsImageUpscalerRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/api/upscale-image': typeof ApiUpscaleImageRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
+  '/tools/image-upscaler': typeof ToolsImageUpscalerRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/api/upscale-image': typeof ApiUpscaleImageRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
+  '/tools/image-upscaler': typeof ToolsImageUpscalerRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
     | '/api/upscale-image'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
+    | '/tools/image-upscaler'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/pdf-to-jpg'
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | '/api/upscale-image'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
+    | '/tools/image-upscaler'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/pdf-to-jpg'
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/api/upscale-image'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
+    | '/tools/image-upscaler'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/pdf-to-jpg'
@@ -251,6 +263,7 @@ export interface RootRouteChildren {
   ApiUpscaleImageRoute: typeof ApiUpscaleImageRoute
   ToolsCurrencyConverterRoute: typeof ToolsCurrencyConverterRoute
   ToolsImageCompressorRoute: typeof ToolsImageCompressorRoute
+  ToolsImageUpscalerRoute: typeof ToolsImageUpscalerRoute
   ToolsInvoiceGeneratorRoute: typeof ToolsInvoiceGeneratorRoute
   ToolsPassportPhotoRoute: typeof ToolsPassportPhotoRoute
   ToolsPdfToJpgRoute: typeof ToolsPdfToJpgRoute
@@ -350,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsInvoiceGeneratorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/image-upscaler': {
+      id: '/tools/image-upscaler'
+      path: '/tools/image-upscaler'
+      fullPath: '/tools/image-upscaler'
+      preLoaderRoute: typeof ToolsImageUpscalerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools/image-compressor': {
       id: '/tools/image-compressor'
       path: '/tools/image-compressor'
@@ -414,6 +434,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiUpscaleImageRoute: ApiUpscaleImageRoute,
   ToolsCurrencyConverterRoute: ToolsCurrencyConverterRoute,
   ToolsImageCompressorRoute: ToolsImageCompressorRoute,
+  ToolsImageUpscalerRoute: ToolsImageUpscalerRoute,
   ToolsInvoiceGeneratorRoute: ToolsInvoiceGeneratorRoute,
   ToolsPassportPhotoRoute: ToolsPassportPhotoRoute,
   ToolsPdfToJpgRoute: ToolsPdfToJpgRoute,
