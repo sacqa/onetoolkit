@@ -24,6 +24,7 @@ import { Route as ToolsPassportPhotoRouteImport } from './routes/tools/passport-
 import { Route as ToolsInvoiceGeneratorRouteImport } from './routes/tools/invoice-generator'
 import { Route as ToolsImageCompressorRouteImport } from './routes/tools/image-compressor'
 import { Route as ToolsCurrencyConverterRouteImport } from './routes/tools/currency-converter'
+import { Route as ApiUpscaleImageRouteImport } from './routes/api/upscale-image'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 
@@ -101,6 +102,11 @@ const ToolsCurrencyConverterRoute = ToolsCurrencyConverterRouteImport.update({
   path: '/tools/currency-converter',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUpscaleImageRoute = ApiUpscaleImageRouteImport.update({
+  id: '/api/upscale-image',
+  path: '/api/upscale-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/upscale-image': typeof ApiUpscaleImageRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/upscale-image': typeof ApiUpscaleImageRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/api/upscale-image': typeof ApiUpscaleImageRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin'
     | '/dashboard'
+    | '/api/upscale-image'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
@@ -199,6 +209,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin'
     | '/dashboard'
+    | '/api/upscale-image'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
@@ -218,6 +229,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/api/upscale-image'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
@@ -236,6 +248,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  ApiUpscaleImageRoute: typeof ApiUpscaleImageRoute
   ToolsCurrencyConverterRoute: typeof ToolsCurrencyConverterRoute
   ToolsImageCompressorRoute: typeof ToolsImageCompressorRoute
   ToolsInvoiceGeneratorRoute: typeof ToolsInvoiceGeneratorRoute
@@ -351,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsCurrencyConverterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/upscale-image': {
+      id: '/api/upscale-image'
+      path: '/api/upscale-image'
+      fullPath: '/api/upscale-image'
+      preLoaderRoute: typeof ApiUpscaleImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -391,6 +411,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  ApiUpscaleImageRoute: ApiUpscaleImageRoute,
   ToolsCurrencyConverterRoute: ToolsCurrencyConverterRoute,
   ToolsImageCompressorRoute: ToolsImageCompressorRoute,
   ToolsInvoiceGeneratorRoute: ToolsInvoiceGeneratorRoute,
