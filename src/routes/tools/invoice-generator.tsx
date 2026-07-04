@@ -315,11 +315,14 @@ function InvoiceTool() {
             {/* PREVIEW */}
             <aside className="lg:sticky lg:top-20 h-fit">
               <div className="rounded-2xl border border-border bg-card overflow-hidden">
-                <div className="p-8" style={{ borderTop: `4px solid ${TEMPLATE_ACCENTS[template]}` }}>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="text-2xl font-bold" style={{ color: TEMPLATE_ACCENTS[template] }}>INVOICE</div>
-                      <div className="text-sm text-muted-foreground mt-1">{number}</div>
+                <div className="p-8" style={{ borderTop: `4px solid ${accentColor || TEMPLATE_ACCENTS[template]}` }}>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                      {logo && <img src={logo} alt="Logo" className="h-16 w-16 rounded object-contain bg-white border border-border p-1" />}
+                      <div>
+                        <div className="text-2xl font-bold" style={{ color: accentColor || TEMPLATE_ACCENTS[template] }}>INVOICE</div>
+                        <div className="text-sm text-muted-foreground mt-1">{number}</div>
+                      </div>
                     </div>
                     <div className="text-right text-sm">
                       <div className="font-medium">{business.name}</div>
