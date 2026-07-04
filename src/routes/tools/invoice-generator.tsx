@@ -54,7 +54,10 @@ function InvoiceTool() {
   ]);
   const [discount, setDiscount] = useState(0);
   const [notes, setNotes] = useState("Thank you for your business!");
+  const [logo, setLogo] = useState<string | null>(null);
+  const [accentColor, setAccentColor] = useState<string>(TEMPLATE_ACCENTS.modern);
   const [saving, setSaving] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   const totals = useMemo(() => {
     const subtotal = items.reduce((s, i) => s + i.qty * i.price, 0);
