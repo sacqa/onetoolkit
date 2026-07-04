@@ -60,10 +60,15 @@ function ImageCompressorPage() {
     const next: Item[] = [];
     for (const f of Array.from(files)) {
       if (!f.type.startsWith("image/")) continue;
-      next.push({ id: crypto.randomUUID(), file: f, originalSize: f.size, status: "pending" });
+      if (f.size > 25 * 1024 * 1024) { toast.error(`${f.name} exceeds 25MB`); continue; }
+      next.push({ id: crypto.randomUUID(), file: f, originalUrl: URL.createObjectURL(f), originalSize: f.size, status: "pending" });
     }
-    setItems((p) => [...p, ...next]);
-  }, []);
+    setItems((p) => {
+      const merged = [...p, ...next];
+      if (!selectedId && merged.length) setSelectedId(merged[0].id);
+      return merged;
+    });
+  }, [selectedId]);
 
   const compressAll = async () => {
     if (items.length === 0) return;
