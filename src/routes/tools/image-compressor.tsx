@@ -28,8 +28,10 @@ export const Route = createFileRoute("/tools/image-compressor")({
 type Item = {
   id: string;
   file: File;
+  originalUrl: string;
   originalSize: number;
   blob?: Blob;
+  outUrl?: string;
   outName?: string;
   outSize?: number;
   status: "pending" | "working" | "done" | "error";
@@ -40,6 +42,7 @@ const fmt = (b: number) => (b < 1024 ? `${b} B` : b < 1048576 ? `${(b / 1024).to
 
 function ImageCompressorPage() {
   const [items, setItems] = useState<Item[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [quality, setQuality] = useState(75);
   const [maxWidth, setMaxWidth] = useState(2048);
   const [format, setFormat] = useState<"keep" | "image/jpeg" | "image/webp" | "image/png">("keep");
