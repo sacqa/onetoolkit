@@ -75,15 +75,20 @@ function InvoiceTool() {
   const fmt = (n: number) => n.toLocaleString(undefined, { style: "currency", currency });
 
   function downloadPdf() {
-    const accent = TEMPLATE_ACCENTS[template];
+    const accent = accentColor || TEMPLATE_ACCENTS[template];
     const doc = new jsPDF({ unit: "pt", format: "a4" });
-    doc.setFontSize(22).setTextColor(accent).text("INVOICE", 40, 60);
-    doc.setFontSize(10).setTextColor("#111").text(number, 40, 80);
+
+    if (logo) {
+      try { doc.addImage(logo, "PNG", 40, 40, 70, 70, undefined, "FAST"); } catch { /* ignore bad image */ }
+    }
+    doc.setFontSize(22).setTextColor(accent).text("INVOICE", logo ? 130 : 40, 60);
+    doc.setFontSize(10).setTextColor("#111").text(number, logo ? 130 : 40, 80);
 
     doc.setFontSize(10).setTextColor("#555");
     doc.text(business.name, 555, 60, { align: "right" });
     doc.text(business.email, 555, 75, { align: "right" });
     if (business.phone) doc.text(business.phone, 555, 90, { align: "right" });
+    if (business.address) doc.text(business.address, 555, 105, { align: "right" });
 
     doc.setTextColor("#111").setFontSize(11).text("Bill to", 40, 130);
     doc.setFontSize(10).setTextColor("#555")
