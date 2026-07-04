@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
 });
 
 const ICONS: Record<string, LucideIcon> = {
-  QrCode, FileText, FileType2, Sparkles, IdCard, ImageDown, DollarSign,
+  QrCode, FileText, FileType2, FileImage, Sparkles, IdCard, ImageDown, DollarSign,
   Zap, Shield, Smartphone, Star,
 };
 
