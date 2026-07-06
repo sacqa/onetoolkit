@@ -13,29 +13,72 @@ import { SITE_NAME } from "@/lib/site";
 export const Route = createFileRoute("/tools/currency-converter")({
   head: () => ({
     meta: [
-      { title: `Currency Converter — Live exchange rates | ${SITE_NAME}` },
-      { name: "description", content: "Convert 150+ currencies with live mid-market rates and 30-day trend charts. Free and fast." },
-      { property: "og:title", content: "Free Currency Converter with 30-day Trends" },
-      { property: "og:description", content: "Live exchange rates and historical charts. No signup, no ads in your face." },
+      { title: `Currency Converter — Live worldwide rates | ${SITE_NAME}` },
+      { name: "description", content: "Convert 160+ world currencies with live mid-market rates and historical trend charts. Free and fast." },
+      { property: "og:title", content: "Free Currency Converter — 160+ currencies" },
+      { property: "og:description", content: "Live exchange rates across every major and minor currency, with historical charts. No signup." },
     ],
     links: [{ rel: "canonical", href: "/tools/currency-converter" }],
   }),
   component: CurrencyConverterPage,
 });
 
-// Frankfurter is a free, no-key ECB-backed FX API.
-const API = "https://api.frankfurter.dev/v1";
+// Live rates — open.er-api.com covers 160+ currencies, no key required.
+const LIVE_API = "https://open.er-api.com/v6/latest";
+// Historical — Frankfurter (ECB) covers ~30 majors. Used only when both codes are supported.
+const HIST_API = "https://api.frankfurter.dev/v1";
 
-const CURRENCIES = [
-  ["USD", "US Dollar"], ["EUR", "Euro"], ["GBP", "British Pound"], ["JPY", "Japanese Yen"],
-  ["AUD", "Australian Dollar"], ["CAD", "Canadian Dollar"], ["CHF", "Swiss Franc"], ["CNY", "Chinese Yuan"],
-  ["HKD", "Hong Kong Dollar"], ["INR", "Indian Rupee"], ["NZD", "New Zealand Dollar"], ["SEK", "Swedish Krona"],
-  ["KRW", "South Korean Won"], ["SGD", "Singapore Dollar"], ["NOK", "Norwegian Krone"], ["MXN", "Mexican Peso"],
-  ["BRL", "Brazilian Real"], ["ZAR", "South African Rand"], ["TRY", "Turkish Lira"], ["PLN", "Polish Złoty"],
-  ["DKK", "Danish Krone"], ["CZK", "Czech Koruna"], ["HUF", "Hungarian Forint"], ["IDR", "Indonesian Rupiah"],
-  ["ILS", "Israeli Shekel"], ["MYR", "Malaysian Ringgit"], ["PHP", "Philippine Peso"], ["RON", "Romanian Leu"],
-  ["THB", "Thai Baht"], ["ISK", "Icelandic Króna"], ["BGN", "Bulgarian Lev"],
-] as const;
+// Worldwide currency list (ISO 4217). Sorted alphabetically by code.
+const CURRENCIES: [string, string][] = [
+  ["AED", "UAE Dirham"], ["AFN", "Afghan Afghani"], ["ALL", "Albanian Lek"], ["AMD", "Armenian Dram"],
+  ["ANG", "Netherlands Antillean Guilder"], ["AOA", "Angolan Kwanza"], ["ARS", "Argentine Peso"],
+  ["AUD", "Australian Dollar"], ["AWG", "Aruban Florin"], ["AZN", "Azerbaijani Manat"],
+  ["BAM", "Bosnia-Herzegovina Convertible Mark"], ["BBD", "Barbadian Dollar"], ["BDT", "Bangladeshi Taka"],
+  ["BGN", "Bulgarian Lev"], ["BHD", "Bahraini Dinar"], ["BIF", "Burundian Franc"], ["BMD", "Bermudan Dollar"],
+  ["BND", "Brunei Dollar"], ["BOB", "Bolivian Boliviano"], ["BRL", "Brazilian Real"], ["BSD", "Bahamian Dollar"],
+  ["BTN", "Bhutanese Ngultrum"], ["BWP", "Botswanan Pula"], ["BYN", "Belarusian Ruble"], ["BZD", "Belize Dollar"],
+  ["CAD", "Canadian Dollar"], ["CDF", "Congolese Franc"], ["CHF", "Swiss Franc"], ["CLP", "Chilean Peso"],
+  ["CNY", "Chinese Yuan"], ["COP", "Colombian Peso"], ["CRC", "Costa Rican Colón"], ["CUP", "Cuban Peso"],
+  ["CVE", "Cape Verdean Escudo"], ["CZK", "Czech Koruna"], ["DJF", "Djiboutian Franc"], ["DKK", "Danish Krone"],
+  ["DOP", "Dominican Peso"], ["DZD", "Algerian Dinar"], ["EGP", "Egyptian Pound"], ["ERN", "Eritrean Nakfa"],
+  ["ETB", "Ethiopian Birr"], ["EUR", "Euro"], ["FJD", "Fijian Dollar"], ["FKP", "Falkland Islands Pound"],
+  ["FOK", "Faroese Króna"], ["GBP", "British Pound"], ["GEL", "Georgian Lari"], ["GGP", "Guernsey Pound"],
+  ["GHS", "Ghanaian Cedi"], ["GIP", "Gibraltar Pound"], ["GMD", "Gambian Dalasi"], ["GNF", "Guinean Franc"],
+  ["GTQ", "Guatemalan Quetzal"], ["GYD", "Guyanaese Dollar"], ["HKD", "Hong Kong Dollar"], ["HNL", "Honduran Lempira"],
+  ["HRK", "Croatian Kuna"], ["HTG", "Haitian Gourde"], ["HUF", "Hungarian Forint"], ["IDR", "Indonesian Rupiah"],
+  ["ILS", "Israeli New Shekel"], ["IMP", "Isle of Man Pound"], ["INR", "Indian Rupee"], ["IQD", "Iraqi Dinar"],
+  ["IRR", "Iranian Rial"], ["ISK", "Icelandic Króna"], ["JEP", "Jersey Pound"], ["JMD", "Jamaican Dollar"],
+  ["JOD", "Jordanian Dinar"], ["JPY", "Japanese Yen"], ["KES", "Kenyan Shilling"], ["KGS", "Kyrgystani Som"],
+  ["KHR", "Cambodian Riel"], ["KID", "Kiribati Dollar"], ["KMF", "Comorian Franc"], ["KRW", "South Korean Won"],
+  ["KWD", "Kuwaiti Dinar"], ["KYD", "Cayman Islands Dollar"], ["KZT", "Kazakhstani Tenge"], ["LAK", "Laotian Kip"],
+  ["LBP", "Lebanese Pound"], ["LKR", "Sri Lankan Rupee"], ["LRD", "Liberian Dollar"], ["LSL", "Lesotho Loti"],
+  ["LYD", "Libyan Dinar"], ["MAD", "Moroccan Dirham"], ["MDL", "Moldovan Leu"], ["MGA", "Malagasy Ariary"],
+  ["MKD", "Macedonian Denar"], ["MMK", "Myanmar Kyat"], ["MNT", "Mongolian Tugrik"], ["MOP", "Macanese Pataca"],
+  ["MRU", "Mauritanian Ouguiya"], ["MUR", "Mauritian Rupee"], ["MVR", "Maldivian Rufiyaa"], ["MWK", "Malawian Kwacha"],
+  ["MXN", "Mexican Peso"], ["MYR", "Malaysian Ringgit"], ["MZN", "Mozambican Metical"], ["NAD", "Namibian Dollar"],
+  ["NGN", "Nigerian Naira"], ["NIO", "Nicaraguan Córdoba"], ["NOK", "Norwegian Krone"], ["NPR", "Nepalese Rupee"],
+  ["NZD", "New Zealand Dollar"], ["OMR", "Omani Rial"], ["PAB", "Panamanian Balboa"], ["PEN", "Peruvian Sol"],
+  ["PGK", "Papua New Guinean Kina"], ["PHP", "Philippine Peso"], ["PKR", "Pakistani Rupee"], ["PLN", "Polish Złoty"],
+  ["PYG", "Paraguayan Guarani"], ["QAR", "Qatari Rial"], ["RON", "Romanian Leu"], ["RSD", "Serbian Dinar"],
+  ["RUB", "Russian Ruble"], ["RWF", "Rwandan Franc"], ["SAR", "Saudi Riyal"], ["SBD", "Solomon Islands Dollar"],
+  ["SCR", "Seychellois Rupee"], ["SDG", "Sudanese Pound"], ["SEK", "Swedish Krona"], ["SGD", "Singapore Dollar"],
+  ["SHP", "St. Helena Pound"], ["SLE", "Sierra Leonean Leone"], ["SOS", "Somali Shilling"], ["SRD", "Surinamese Dollar"],
+  ["SSP", "South Sudanese Pound"], ["STN", "São Tomé & Príncipe Dobra"], ["SYP", "Syrian Pound"], ["SZL", "Eswatini Lilangeni"],
+  ["THB", "Thai Baht"], ["TJS", "Tajikistani Somoni"], ["TMT", "Turkmenistani Manat"], ["TND", "Tunisian Dinar"],
+  ["TOP", "Tongan Paʻanga"], ["TRY", "Turkish Lira"], ["TTD", "Trinidad & Tobago Dollar"], ["TVD", "Tuvaluan Dollar"],
+  ["TWD", "New Taiwan Dollar"], ["TZS", "Tanzanian Shilling"], ["UAH", "Ukrainian Hryvnia"], ["UGX", "Ugandan Shilling"],
+  ["USD", "US Dollar"], ["UYU", "Uruguayan Peso"], ["UZS", "Uzbekistani Som"], ["VES", "Venezuelan Bolívar"],
+  ["VND", "Vietnamese Đồng"], ["VUV", "Vanuatu Vatu"], ["WST", "Samoan Tala"], ["XAF", "Central African CFA Franc"],
+  ["XCD", "East Caribbean Dollar"], ["XDR", "IMF Special Drawing Rights"], ["XOF", "West African CFA Franc"],
+  ["XPF", "CFP Franc"], ["YER", "Yemeni Rial"], ["ZAR", "South African Rand"], ["ZMW", "Zambian Kwacha"],
+  ["ZWL", "Zimbabwean Dollar"],
+];
+
+// Currencies covered by Frankfurter (ECB) for historical trend.
+const HIST_SUPPORTED = new Set([
+  "AUD","BGN","BRL","CAD","CHF","CNY","CZK","DKK","EUR","GBP","HKD","HUF","IDR","ILS","INR","ISK",
+  "JPY","KRW","MXN","MYR","NOK","NZD","PHP","PLN","RON","SEK","SGD","THB","TRY","USD","ZAR",
+]);
 
 function CurrencyConverterPage() {
   const [from, setFrom] = useState("USD");
@@ -46,36 +89,52 @@ function CurrencyConverterPage() {
   const [date, setDate] = useState<string>("");
   const [history, setHistory] = useState<{ date: string; rate: number }[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const historyAvailable = HIST_SUPPORTED.has(from) && HIST_SUPPORTED.has(to);
 
   useEffect(() => {
     let cancelled = false;
     async function load() {
+      setError(null);
       if (from === to) {
         setRate(1);
         setHistory([]);
+        setDate(new Date().toISOString().slice(0, 10));
         return;
       }
       setLoading(true);
       try {
-        const cur = await fetch(`${API}/latest?from=${from}&to=${to}`).then((r) => r.json());
+        // Live rate — worldwide coverage via open.er-api.com
+        const cur = await fetch(`${LIVE_API}/${from}`).then((r) => r.json());
         if (cancelled) return;
-        setRate(cur.rates[to]);
-        setDate(cur.date);
+        const r = cur?.rates?.[to];
+        if (typeof r !== "number") throw new Error(`No rate for ${from}→${to}`);
+        setRate(r);
+        setDate((cur.time_last_update_utc as string | undefined)?.slice(5, 16) ?? "");
 
-        const end = new Date();
-        const start = new Date();
-        start.setDate(end.getDate() - range);
-        const fmt = (d: Date) => d.toISOString().slice(0, 10);
-        const hist = await fetch(`${API}/${fmt(start)}..${fmt(end)}?from=${from}&to=${to}`).then((r) => r.json());
-        if (cancelled) return;
-        const rows = Object.entries(hist.rates as Record<string, Record<string, number>>)
-          .map(([d, r]) => ({ date: d.slice(5), rate: Number(r[to]?.toFixed(4) ?? 0) }))
-          .sort((a, b) => a.date.localeCompare(b.date));
-        setHistory(rows);
-      } catch {
-        setRate(null);
+        // Historical chart — only when both codes are supported by ECB
+        if (HIST_SUPPORTED.has(from) && HIST_SUPPORTED.has(to)) {
+          const end = new Date();
+          const start = new Date();
+          start.setDate(end.getDate() - range);
+          const fmt = (d: Date) => d.toISOString().slice(0, 10);
+          const hist = await fetch(`${HIST_API}/${fmt(start)}..${fmt(end)}?base=${from}&symbols=${to}`).then((res) => res.json());
+          if (cancelled) return;
+          const rows = Object.entries(hist.rates as Record<string, Record<string, number>>)
+            .map(([d, rr]) => ({ date: d.slice(5), rate: Number(rr[to]?.toFixed(4) ?? 0) }))
+            .sort((a, b) => a.date.localeCompare(b.date));
+          setHistory(rows);
+        } else {
+          setHistory([]);
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setRate(null);
+          setError(e instanceof Error ? e.message : "Failed to load rate");
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
     void load();
@@ -104,7 +163,7 @@ function CurrencyConverterPage() {
             <DollarSign className="h-8 w-8 text-primary" /> Currency Converter
           </h1>
           <p className="mt-2 text-muted-foreground">
-            Live mid-market rates from the European Central Bank, with a 30-day trend.
+            Live mid-market rates across {CURRENCIES.length}+ world currencies, with historical trend for majors.
           </p>
         </div>
 
@@ -124,7 +183,7 @@ function CurrencyConverterPage() {
                 <Label>From</Label>
                 <Select value={from} onValueChange={setFrom}>
                   <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-80">
                     {CURRENCIES.map(([c, n]) => <SelectItem key={c} value={c}>{c} — {n}</SelectItem>)}
                   </SelectContent>
                 </Select>
@@ -141,7 +200,7 @@ function CurrencyConverterPage() {
                 <Label>To</Label>
                 <Select value={to} onValueChange={setTo}>
                   <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-h-80">
                     {CURRENCIES.map(([c, n]) => <SelectItem key={c} value={c}>{c} — {n}</SelectItem>)}
                   </SelectContent>
                 </Select>
@@ -159,6 +218,7 @@ function CurrencyConverterPage() {
                   1 {from} = {rate.toFixed(4)} {to} {date && <>· as of {date}</>}
                 </div>
               )}
+              {error && <div className="text-sm text-destructive mt-2">{error}</div>}
             </div>
           </div>
 
@@ -198,8 +258,12 @@ function CurrencyConverterPage() {
                   </LineChart>
                 </ResponsiveContainer>
               ) : (
-                <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
-                  {loading ? "Loading chart…" : "Pick two different currencies"}
+                <div className="h-full flex items-center justify-center text-center text-sm text-muted-foreground px-6">
+                  {loading
+                    ? "Loading chart…"
+                    : !historyAvailable
+                      ? "Historical charts are available for major currencies (USD, EUR, GBP, JPY, INR, CNY, and other ECB majors). Live rate is shown for all other pairs."
+                      : "Pick two different currencies"}
                 </div>
               )}
             </div>
