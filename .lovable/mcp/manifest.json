@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "onetoolkit-mcp",
+      "version": "0.1.0",
+      "title": "One Tool Kit"
+    },
+    "tools": [
+      {
+        "name": "list_tools",
+        "title": "List available tools",
+        "description": "List all tools available on One Tool Kit, with their slug, name, category, blurb, and public URL.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "generate_qr_code_url",
+        "title": "Generate QR code image URL",
+        "description": "Generate a public PNG image URL for a QR code encoding the given text or URL. Returns a link that can be embedded or downloaded.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Text or URL to encode in the QR code."
+            },
+            "size": {
+              "description": "Square size in pixels (default 512).",
+              "type": "integer",
+              "minimum": 64,
+              "maximum": 1024
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "convert_currency",
+        "title": "Convert currency",
+        "description": "Convert an amount between two currencies using live exchange rates (ISO 4217 codes, e.g. USD, EUR, INR).",
+        "annotations": {
+          "readOnlyHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "amount": {
+              "type": "number",
+              "description": "Amount to convert."
+            },
+            "from": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 3,
+              "description": "Source currency code, e.g. USD."
+            },
+            "to": {
+              "type": "string",
+              "minLength": 3,
+              "maxLength": 3,
+              "description": "Target currency code, e.g. EUR."
+            }
+          },
+          "required": [
+            "amount",
+            "from",
+            "to"
+          ]
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
