@@ -12,6 +12,7 @@ export default defineConfig({
   // Nitro auto-detects Vercel during `npm run build` on Vercel, while Lovable
   // still keeps its managed Cloudflare-compatible preset for preview/publish.
   nitro: true,
+  plugins: [mcpPlugin()],
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
