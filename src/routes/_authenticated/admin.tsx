@@ -4,9 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import ReactMarkdown from "react-markdown";
 import { toast } from "sonner";
-import { Shield, Users, FileText, Settings as SettingsIcon, DollarSign, Loader2, Home, Wrench, Megaphone, BarChart3, Plus, Trash2, type LucideIcon } from "lucide-react";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { Shield, Users, FileText, Settings as SettingsIcon, DollarSign, Loader2, Home, Wrench, Megaphone, BarChart3, Plus, Trash2, ExternalLink, LayoutDashboard, ChevronRight, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -37,30 +35,72 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type SectionKey = "homepage" | "tools" | "features" | "integrations" | "users" | "content" | "settings" | "adsense";
+type SectionKey =
+  | "dashboard"
+  | "homepage"
+  | "tools"
+  | "features"
+  | "content"
+  | "users"
+  | "integrations"
+  | "adsense"
+  | "settings";
 
-const SECTIONS: { key: SectionKey; label: string; icon: LucideIcon; desc: string }[] = [
-  { key: "homepage", label: "Homepage", icon: Home, desc: "Branding, hero banner and CTAs" },
-  { key: "tools", label: "Tool cards", icon: Wrench, desc: "Tiles shown on the homepage grid" },
-  { key: "features", label: "Features", icon: Megaphone, desc: "Three feature highlights" },
-  { key: "integrations", label: "SEO & Analytics", icon: BarChart3, desc: "GA4 + Search Console" },
-  { key: "users", label: "Users", icon: Users, desc: "Manage roles and accounts" },
-  { key: "content", label: "Pages", icon: FileText, desc: "About, Privacy, Terms…" },
-  { key: "settings", label: "Limits", icon: SettingsIcon, desc: "Per-tool usage caps" },
-  { key: "adsense", label: "AdSense", icon: DollarSign, desc: "Publisher ID and ad slots" },
+type SectionDef = { key: SectionKey; label: string; icon: LucideIcon; desc: string };
+
+const SECTION_GROUPS: { label: string; items: SectionDef[] }[] = [
+  {
+    label: "Overview",
+    items: [
+      { key: "dashboard", label: "Dashboard", icon: LayoutDashboard, desc: "At a glance" },
+    ],
+  },
+  {
+    label: "Content",
+    items: [
+      { key: "homepage", label: "Homepage", icon: Home, desc: "Branding, hero banner and CTAs" },
+      { key: "tools", label: "Tools", icon: Wrench, desc: "Tiles shown on the homepage grid" },
+      { key: "features", label: "Features", icon: Megaphone, desc: "Three feature highlights" },
+      { key: "content", label: "Pages", icon: FileText, desc: "About, Privacy, Terms…" },
+    ],
+  },
+  {
+    label: "People",
+    items: [
+      { key: "users", label: "Users", icon: Users, desc: "Manage roles and accounts" },
+    ],
+  },
+  {
+    label: "Integrations",
+    items: [
+      { key: "integrations", label: "SEO & Analytics", icon: BarChart3, desc: "GA4 + Search Console" },
+      { key: "adsense", label: "AdSense", icon: DollarSign, desc: "Publisher ID and ad slots" },
+    ],
+  },
+  {
+    label: "System",
+    items: [
+      { key: "settings", label: "Limits & Settings", icon: SettingsIcon, desc: "Per-tool usage caps" },
+    ],
+  },
 ];
+
+const ALL_SECTIONS: SectionDef[] = SECTION_GROUPS.flatMap((g) => g.items);
 
 function AdminPage() {
   const { data: isAdmin, isLoading: roleLoading } = useIsAdmin();
-  const [active, setActive] = useState<SectionKey>("homepage");
+  const [active, setActive] = useState<SectionKey>("dashboard");
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   if (roleLoading) {
-    return <Shell><div className="text-muted-foreground">Checking permissions…</div></Shell>;
+    return <Shell active="dashboard" setActive={setActive} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen}>
+      <div className="text-muted-foreground">Checking permissions…</div>
+    </Shell>;
   }
 
   if (!isAdmin) {
     return (
-      <Shell>
+      <Shell active="dashboard" setActive={setActive} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} hideSidebar>
         <div className="max-w-md rounded-2xl border border-border bg-card p-6">
           <Shield className="h-6 w-6 text-primary mb-3" />
           <h2 className="font-semibold">Admin access required</h2>
@@ -72,82 +112,238 @@ function AdminPage() {
     );
   }
 
-  const current = SECTIONS.find((s) => s.key === active)!;
+  const current = ALL_SECTIONS.find((s) => s.key === active) ?? ALL_SECTIONS[0];
 
   return (
-    <Shell>
-      <div className="grid gap-6 lg:grid-cols-[260px,1fr]">
-        {/* Sidebar */}
-        <aside className="lg:sticky lg:top-20 self-start">
-          <nav className="rounded-2xl border border-border bg-card p-2 space-y-0.5">
-            {SECTIONS.map((s) => {
-              const Icon = s.icon;
-              const isActive = active === s.key;
-              return (
-                <button
-                  key={s.key}
-                  onClick={() => setActive(s.key)}
-                  className={`w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-left transition-colors ${
-                    isActive
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-foreground/80 hover:bg-muted"
-                  }`}
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  <span className="truncate">{s.label}</span>
-                </button>
-              );
-            })}
-          </nav>
-        </aside>
-
-        {/* Content */}
-        <section className="min-w-0">
-          <div className="mb-6">
-            <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
-              <Shield className="h-3.5 w-3.5" />
-              <span>Admin</span>
-              <span>›</span>
-              <span>{current.label}</span>
-            </div>
-            <h2 className="mt-1 text-xl sm:text-2xl font-bold tracking-tight">{current.label}</h2>
+    <Shell active={active} setActive={setActive} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen}>
+      <div className="mb-6">
+        <div className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-muted-foreground">
+          <span>Admin</span>
+          <ChevronRight className="h-3 w-3" />
+          <span>{current.label}</span>
+        </div>
+        <div className="mt-1 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">{current.label}</h2>
             <p className="text-sm text-muted-foreground">{current.desc}</p>
           </div>
-
-          {active === "homepage" && <HomepageTab />}
-          {active === "tools" && <ToolsTab />}
-          {active === "features" && <FeaturesTab />}
-          {active === "integrations" && <IntegrationsTab />}
-          {active === "users" && <UsersTab />}
-          {active === "content" && <ContentTab />}
-          {active === "settings" && <SettingsTab />}
-          {active === "adsense" && <AdSenseTab />}
-        </section>
+        </div>
       </div>
+
+      {active === "dashboard" && <DashboardTab setActive={setActive} />}
+      {active === "homepage" && <HomepageTab />}
+      {active === "tools" && <ToolsTab />}
+      {active === "features" && <FeaturesTab />}
+      {active === "integrations" && <IntegrationsTab />}
+      {active === "users" && <UsersTab />}
+      {active === "content" && <ContentTab />}
+      {active === "settings" && <SettingsTab />}
+      {active === "adsense" && <AdSenseTab />}
     </Shell>
   );
 }
 
-function Shell({ children }: { children: React.ReactNode }) {
+function Shell({
+  children,
+  active,
+  setActive,
+  mobileOpen,
+  setMobileOpen,
+  hideSidebar,
+}: {
+  children: React.ReactNode;
+  active: SectionKey;
+  setActive: (k: SectionKey) => void;
+  mobileOpen: boolean;
+  setMobileOpen: (v: boolean) => void;
+  hideSidebar?: boolean;
+}) {
   return (
-    <div className="flex min-h-screen flex-col bg-muted/30">
-      <SiteHeader />
-      <main className="flex-1 container-page py-8 sm:py-10">
-        <div className="flex items-center gap-3 mb-8">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-500 text-white shadow-md">
-            <Shield className="h-5 w-5" />
+    <div className="min-h-screen bg-muted/30">
+      {/* Top admin bar */}
+      <header className="sticky top-0 z-30 h-14 border-b border-border/70 bg-[oklch(0.22_0.03_270)] text-white/90 flex items-center gap-3 px-4">
+        <button
+          type="button"
+          className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-white/10"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          aria-label="Toggle sidebar"
+        >
+          <LayoutDashboard className="h-4 w-4" />
+        </button>
+        <div className="flex items-center gap-2 font-semibold">
+          <span className="grid h-8 w-8 place-items-center rounded-md bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow">
+            <Shield className="h-4 w-4" />
           </span>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Admin dashboard</h1>
-            <p className="text-sm text-muted-foreground">Everything you need to run One Tool Kit.</p>
-          </div>
+          <span className="hidden sm:inline">{SITE_NAME} · Admin</span>
+          <span className="sm:hidden">Admin</span>
         </div>
-        {children}
-      </main>
-      <SiteFooter />
+        <div className="ml-auto flex items-center gap-2 text-sm">
+          <Link
+            to="/"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 hover:bg-white/10"
+          >
+            <ExternalLink className="h-3.5 w-3.5" /> Visit site
+          </Link>
+          <Link to="/dashboard" className="rounded-md px-2.5 py-1.5 hover:bg-white/10">
+            Account
+          </Link>
+        </div>
+      </header>
+
+      <div className="flex">
+        {/* Sidebar */}
+        {!hideSidebar && (
+          <>
+            <aside
+              className={`fixed inset-y-14 left-0 z-20 w-64 shrink-0 bg-[oklch(0.24_0.03_270)] text-white/85 overflow-y-auto transition-transform lg:sticky lg:top-14 lg:h-[calc(100vh-3.5rem)] lg:translate-x-0 ${
+                mobileOpen ? "translate-x-0" : "-translate-x-full"
+              }`}
+            >
+              <nav className="p-3 space-y-5">
+                {SECTION_GROUPS.map((group) => (
+                  <div key={group.label}>
+                    <div className="px-2 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">
+                      {group.label}
+                    </div>
+                    <div className="space-y-0.5">
+                      {group.items.map((s) => {
+                        const Icon = s.icon;
+                        const isActive = active === s.key;
+                        return (
+                          <button
+                            key={s.key}
+                            onClick={() => { setActive(s.key); setMobileOpen(false); }}
+                            className={`w-full flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-left transition-colors ${
+                              isActive
+                                ? "bg-white/15 text-white shadow-inner"
+                                : "text-white/75 hover:bg-white/10 hover:text-white"
+                            }`}
+                          >
+                            <Icon className="h-4 w-4 shrink-0" />
+                            <span className="truncate">{s.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </nav>
+            </aside>
+            {mobileOpen && (
+              <button
+                type="button"
+                aria-label="Close menu"
+                className="fixed inset-0 top-14 z-10 bg-black/40 lg:hidden"
+                onClick={() => setMobileOpen(false)}
+              />
+            )}
+          </>
+        )}
+
+        {/* Main content */}
+        <main className="flex-1 min-w-0 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+          <div className="mx-auto max-w-6xl">{children}</div>
+        </main>
+      </div>
     </div>
   );
 }
+
+function DashboardTab({ setActive }: { setActive: (k: SectionKey) => void }) {
+  const stats = useDashboardStats();
+  const cards: { key: SectionKey; label: string; value: string | number; icon: LucideIcon; hint: string }[] = [
+    { key: "users", label: "Users", value: stats.users ?? "—", icon: Users, hint: "Registered accounts" },
+    { key: "tools", label: "Tools live", value: stats.toolsLive ?? "—", icon: Wrench, hint: "Cards visible on home" },
+    { key: "content", label: "Pages", value: stats.pages ?? "—", icon: FileText, hint: "Custom page overrides" },
+    { key: "integrations", label: "GA4", value: stats.gaConfigured ? "On" : "Off", icon: BarChart3, hint: "Analytics status" },
+  ];
+
+  const shortcuts = ALL_SECTIONS.filter((s) => s.key !== "dashboard");
+
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((c) => {
+          const Icon = c.icon;
+          return (
+            <button
+              key={c.key}
+              onClick={() => setActive(c.key)}
+              className="text-left rounded-2xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-sm transition"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs uppercase tracking-wider text-muted-foreground">{c.label}</span>
+                <Icon className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div className="mt-1 text-2xl font-bold">{c.value}</div>
+              <div className="text-xs text-muted-foreground">{c.hint}</div>
+            </button>
+          );
+        })}
+      </div>
+
+      <div>
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Manage</h3>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {shortcuts.map((s) => {
+            const Icon = s.icon;
+            return (
+              <button
+                key={s.key}
+                onClick={() => setActive(s.key)}
+                className="text-left group rounded-2xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-sm transition"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-violet-500/15 to-fuchsia-500/15 text-primary">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="font-semibold truncate">{s.label}</div>
+                    <div className="text-xs text-muted-foreground truncate">{s.desc}</div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground group-hover:text-foreground" />
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function useDashboardStats() {
+  const users = useQuery({
+    queryKey: ["admin-stats-users"],
+    queryFn: async () => {
+      const { count } = await supabase.from("profiles").select("id", { count: "exact", head: true });
+      return count ?? 0;
+    },
+  });
+  const tools = useQuery({
+    queryKey: ["cms", "homepage_tools"],
+    queryFn: () => loadSetting<ToolCard[]>("homepage_tools", DEFAULT_TOOLS),
+  });
+  const pages = useQuery({
+    queryKey: ["admin-stats-pages"],
+    queryFn: async () => {
+      const { count } = await supabase.from("page_content").select("slug", { count: "exact", head: true });
+      return count ?? 0;
+    },
+  });
+  const integ = useQuery({
+    queryKey: ["cms", "integrations"],
+    queryFn: () => loadSetting<Integrations>("integrations", DEFAULT_INTEGRATIONS),
+  });
+
+  return {
+    users: users.data,
+    toolsLive: (tools.data ?? []).filter((t) => t.live).length,
+    pages: pages.data,
+    gaConfigured: Boolean(integ.data?.ga_measurement_id),
+  };
+}
+
 
 /* -------- Users -------- */
 function UsersTab() {
