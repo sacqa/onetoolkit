@@ -23,10 +23,8 @@ import { Route as ToolsQrCodeGeneratorRouteImport } from './routes/tools/qr-code
 import { Route as ToolsPdfToJpgRouteImport } from './routes/tools/pdf-to-jpg'
 import { Route as ToolsPassportPhotoRouteImport } from './routes/tools/passport-photo'
 import { Route as ToolsInvoiceGeneratorRouteImport } from './routes/tools/invoice-generator'
-import { Route as ToolsImageUpscalerRouteImport } from './routes/tools/image-upscaler'
 import { Route as ToolsImageCompressorRouteImport } from './routes/tools/image-compressor'
 import { Route as ToolsCurrencyConverterRouteImport } from './routes/tools/currency-converter'
-import { Route as ApiUpscaleImageRouteImport } from './routes/api/upscale-image'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -102,11 +100,6 @@ const ToolsInvoiceGeneratorRoute = ToolsInvoiceGeneratorRouteImport.update({
   path: '/tools/invoice-generator',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ToolsImageUpscalerRoute = ToolsImageUpscalerRouteImport.update({
-  id: '/tools/image-upscaler',
-  path: '/tools/image-upscaler',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ToolsImageCompressorRoute = ToolsImageCompressorRouteImport.update({
   id: '/tools/image-compressor',
   path: '/tools/image-compressor',
@@ -115,11 +108,6 @@ const ToolsImageCompressorRoute = ToolsImageCompressorRouteImport.update({
 const ToolsCurrencyConverterRoute = ToolsCurrencyConverterRouteImport.update({
   id: '/tools/currency-converter',
   path: '/tools/currency-converter',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiUpscaleImageRoute = ApiUpscaleImageRouteImport.update({
-  id: '/api/upscale-image',
-  path: '/api/upscale-image',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -165,10 +153,8 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/api/upscale-image': typeof ApiUpscaleImageRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
-  '/tools/image-upscaler': typeof ToolsImageUpscalerRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
@@ -189,10 +175,8 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/api/upscale-image': typeof ApiUpscaleImageRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
-  '/tools/image-upscaler': typeof ToolsImageUpscalerRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
@@ -215,10 +199,8 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/api/upscale-image': typeof ApiUpscaleImageRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
-  '/tools/image-upscaler': typeof ToolsImageUpscalerRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
@@ -241,10 +223,8 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/dashboard'
-    | '/api/upscale-image'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
-    | '/tools/image-upscaler'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/pdf-to-jpg'
@@ -265,10 +245,8 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/dashboard'
-    | '/api/upscale-image'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
-    | '/tools/image-upscaler'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/pdf-to-jpg'
@@ -290,10 +268,8 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
-    | '/api/upscale-image'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
-    | '/tools/image-upscaler'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/pdf-to-jpg'
@@ -314,10 +290,8 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  ApiUpscaleImageRoute: typeof ApiUpscaleImageRoute
   ToolsCurrencyConverterRoute: typeof ToolsCurrencyConverterRoute
   ToolsImageCompressorRoute: typeof ToolsImageCompressorRoute
-  ToolsImageUpscalerRoute: typeof ToolsImageUpscalerRoute
   ToolsInvoiceGeneratorRoute: typeof ToolsInvoiceGeneratorRoute
   ToolsPassportPhotoRoute: typeof ToolsPassportPhotoRoute
   ToolsPdfToJpgRoute: typeof ToolsPdfToJpgRoute
@@ -425,13 +399,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsInvoiceGeneratorRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/tools/image-upscaler': {
-      id: '/tools/image-upscaler'
-      path: '/tools/image-upscaler'
-      fullPath: '/tools/image-upscaler'
-      preLoaderRoute: typeof ToolsImageUpscalerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/tools/image-compressor': {
       id: '/tools/image-compressor'
       path: '/tools/image-compressor'
@@ -444,13 +411,6 @@ declare module '@tanstack/react-router' {
       path: '/tools/currency-converter'
       fullPath: '/tools/currency-converter'
       preLoaderRoute: typeof ToolsCurrencyConverterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/upscale-image': {
-      id: '/api/upscale-image'
-      path: '/api/upscale-image'
-      fullPath: '/api/upscale-image'
-      preLoaderRoute: typeof ApiUpscaleImageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -518,10 +478,8 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
-  ApiUpscaleImageRoute: ApiUpscaleImageRoute,
   ToolsCurrencyConverterRoute: ToolsCurrencyConverterRoute,
   ToolsImageCompressorRoute: ToolsImageCompressorRoute,
-  ToolsImageUpscalerRoute: ToolsImageUpscalerRoute,
   ToolsInvoiceGeneratorRoute: ToolsInvoiceGeneratorRoute,
   ToolsPassportPhotoRoute: ToolsPassportPhotoRoute,
   ToolsPdfToJpgRoute: ToolsPdfToJpgRoute,
