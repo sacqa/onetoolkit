@@ -19,12 +19,14 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ToolsWordToPdfRouteImport } from './routes/tools/word-to-pdf'
 import { Route as ToolsQrCodeGeneratorRouteImport } from './routes/tools/qr-code-generator'
 import { Route as ToolsPdfToJpgRouteImport } from './routes/tools/pdf-to-jpg'
 import { Route as ToolsPassportPhotoRouteImport } from './routes/tools/passport-photo'
 import { Route as ToolsInvoiceGeneratorRouteImport } from './routes/tools/invoice-generator'
 import { Route as ToolsImageCompressorRouteImport } from './routes/tools/image-compressor'
 import { Route as ToolsCurrencyConverterRouteImport } from './routes/tools/currency-converter'
+import { Route as ToolsCompressPdfRouteImport } from './routes/tools/compress-pdf'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -80,6 +82,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsWordToPdfRoute = ToolsWordToPdfRouteImport.update({
+  id: '/tools/word-to-pdf',
+  path: '/tools/word-to-pdf',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ToolsQrCodeGeneratorRoute = ToolsQrCodeGeneratorRouteImport.update({
   id: '/tools/qr-code-generator',
   path: '/tools/qr-code-generator',
@@ -108,6 +115,11 @@ const ToolsImageCompressorRoute = ToolsImageCompressorRouteImport.update({
 const ToolsCurrencyConverterRoute = ToolsCurrencyConverterRouteImport.update({
   id: '/tools/currency-converter',
   path: '/tools/currency-converter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ToolsCompressPdfRoute = ToolsCompressPdfRouteImport.update({
+  id: '/tools/compress-pdf',
+  path: '/tools/compress-pdf',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -153,12 +165,14 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/tools/compress-pdf': typeof ToolsCompressPdfRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
+  '/tools/word-to-pdf': typeof ToolsWordToPdfRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesByTo {
@@ -175,12 +189,14 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/tools/compress-pdf': typeof ToolsCompressPdfRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
+  '/tools/word-to-pdf': typeof ToolsWordToPdfRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesById {
@@ -199,12 +215,14 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/tools/compress-pdf': typeof ToolsCompressPdfRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
   '/tools/invoice-generator': typeof ToolsInvoiceGeneratorRoute
   '/tools/passport-photo': typeof ToolsPassportPhotoRoute
   '/tools/pdf-to-jpg': typeof ToolsPdfToJpgRoute
   '/tools/qr-code-generator': typeof ToolsQrCodeGeneratorRoute
+  '/tools/word-to-pdf': typeof ToolsWordToPdfRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRouteTypes {
@@ -223,12 +241,14 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/dashboard'
+    | '/tools/compress-pdf'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/pdf-to-jpg'
     | '/tools/qr-code-generator'
+    | '/tools/word-to-pdf'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -245,12 +265,14 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/dashboard'
+    | '/tools/compress-pdf'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/pdf-to-jpg'
     | '/tools/qr-code-generator'
+    | '/tools/word-to-pdf'
     | '/.mcp/invoke-tool/$tool'
   id:
     | '__root__'
@@ -268,12 +290,14 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/tools/compress-pdf'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
     | '/tools/invoice-generator'
     | '/tools/passport-photo'
     | '/tools/pdf-to-jpg'
     | '/tools/qr-code-generator'
+    | '/tools/word-to-pdf'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
 }
@@ -290,12 +314,14 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ToolsCompressPdfRoute: typeof ToolsCompressPdfRoute
   ToolsCurrencyConverterRoute: typeof ToolsCurrencyConverterRoute
   ToolsImageCompressorRoute: typeof ToolsImageCompressorRoute
   ToolsInvoiceGeneratorRoute: typeof ToolsInvoiceGeneratorRoute
   ToolsPassportPhotoRoute: typeof ToolsPassportPhotoRoute
   ToolsPdfToJpgRoute: typeof ToolsPdfToJpgRoute
   ToolsQrCodeGeneratorRoute: typeof ToolsQrCodeGeneratorRoute
+  ToolsWordToPdfRoute: typeof ToolsWordToPdfRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 
@@ -371,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/word-to-pdf': {
+      id: '/tools/word-to-pdf'
+      path: '/tools/word-to-pdf'
+      fullPath: '/tools/word-to-pdf'
+      preLoaderRoute: typeof ToolsWordToPdfRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tools/qr-code-generator': {
       id: '/tools/qr-code-generator'
       path: '/tools/qr-code-generator'
@@ -411,6 +444,13 @@ declare module '@tanstack/react-router' {
       path: '/tools/currency-converter'
       fullPath: '/tools/currency-converter'
       preLoaderRoute: typeof ToolsCurrencyConverterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tools/compress-pdf': {
+      id: '/tools/compress-pdf'
+      path: '/tools/compress-pdf'
+      fullPath: '/tools/compress-pdf'
+      preLoaderRoute: typeof ToolsCompressPdfRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard': {
@@ -478,12 +518,14 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ToolsCompressPdfRoute: ToolsCompressPdfRoute,
   ToolsCurrencyConverterRoute: ToolsCurrencyConverterRoute,
   ToolsImageCompressorRoute: ToolsImageCompressorRoute,
   ToolsInvoiceGeneratorRoute: ToolsInvoiceGeneratorRoute,
   ToolsPassportPhotoRoute: ToolsPassportPhotoRoute,
   ToolsPdfToJpgRoute: ToolsPdfToJpgRoute,
   ToolsQrCodeGeneratorRoute: ToolsQrCodeGeneratorRoute,
+  ToolsWordToPdfRoute: ToolsWordToPdfRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
 }
 export const routeTree = rootRouteImport
