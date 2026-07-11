@@ -60,6 +60,7 @@ export const DEFAULT_TOOLS: ToolCard[] = [
   { slug: "pdf-to-jpg", name: "PDF to JPG", blurb: "Convert each page of a PDF to a high-quality JPG image.", category: "PDF", href: "/tools/pdf-to-jpg", icon: "FileImage", live: true, order: 6 },
   { slug: "compress-pdf", name: "Compress PDF", blurb: "Shrink PDF file size while keeping pages readable.", category: "PDF", href: "/tools/compress-pdf", icon: "FileMinus", live: true, order: 7 },
   { slug: "word-to-pdf", name: "Word to PDF", blurb: "Convert DOCX documents to a clean PDF in your browser.", category: "PDF", href: "/tools/word-to-pdf", icon: "FileType2", live: true, order: 8 },
+  { slug: "company-profile-generator", name: "AI Company Profile", blurb: "Generate a polished company profile with AI and export a designer PDF.", category: "AI Write", href: "/tools/company-profile-generator", icon: "Building2", live: true, order: 9 },
 ];
 
 export const DEFAULT_FEATURES: FeatureItem[] = [

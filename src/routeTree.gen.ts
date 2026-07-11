@@ -27,6 +27,7 @@ import { Route as ToolsInvoiceGeneratorRouteImport } from './routes/tools/invoic
 import { Route as ToolsImageCompressorRouteImport } from './routes/tools/image-compressor'
 import { Route as ToolsCurrencyConverterRouteImport } from './routes/tools/currency-converter'
 import { Route as ToolsCompressPdfRouteImport } from './routes/tools/compress-pdf'
+import { Route as ToolsCompanyProfileGeneratorRouteImport } from './routes/tools/company-profile-generator'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -122,6 +123,12 @@ const ToolsCompressPdfRoute = ToolsCompressPdfRouteImport.update({
   path: '/tools/compress-pdf',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ToolsCompanyProfileGeneratorRoute =
+  ToolsCompanyProfileGeneratorRouteImport.update({
+    id: '/tools/company-profile-generator',
+    path: '/tools/company-profile-generator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -165,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/tools/company-profile-generator': typeof ToolsCompanyProfileGeneratorRoute
   '/tools/compress-pdf': typeof ToolsCompressPdfRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
@@ -189,6 +197,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/tools/company-profile-generator': typeof ToolsCompanyProfileGeneratorRoute
   '/tools/compress-pdf': typeof ToolsCompressPdfRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
@@ -215,6 +224,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/tools/company-profile-generator': typeof ToolsCompanyProfileGeneratorRoute
   '/tools/compress-pdf': typeof ToolsCompressPdfRoute
   '/tools/currency-converter': typeof ToolsCurrencyConverterRoute
   '/tools/image-compressor': typeof ToolsImageCompressorRoute
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/dashboard'
+    | '/tools/company-profile-generator'
     | '/tools/compress-pdf'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
@@ -265,6 +276,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/dashboard'
+    | '/tools/company-profile-generator'
     | '/tools/compress-pdf'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
@@ -290,6 +302,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
+    | '/tools/company-profile-generator'
     | '/tools/compress-pdf'
     | '/tools/currency-converter'
     | '/tools/image-compressor'
@@ -314,6 +327,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ToolsCompanyProfileGeneratorRoute: typeof ToolsCompanyProfileGeneratorRoute
   ToolsCompressPdfRoute: typeof ToolsCompressPdfRoute
   ToolsCurrencyConverterRoute: typeof ToolsCurrencyConverterRoute
   ToolsImageCompressorRoute: typeof ToolsImageCompressorRoute
@@ -453,6 +467,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ToolsCompressPdfRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/tools/company-profile-generator': {
+      id: '/tools/company-profile-generator'
+      path: '/tools/company-profile-generator'
+      fullPath: '/tools/company-profile-generator'
+      preLoaderRoute: typeof ToolsCompanyProfileGeneratorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -518,6 +539,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ToolsCompanyProfileGeneratorRoute: ToolsCompanyProfileGeneratorRoute,
   ToolsCompressPdfRoute: ToolsCompressPdfRoute,
   ToolsCurrencyConverterRoute: ToolsCurrencyConverterRoute,
   ToolsImageCompressorRoute: ToolsImageCompressorRoute,
