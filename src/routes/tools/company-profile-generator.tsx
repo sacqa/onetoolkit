@@ -421,7 +421,7 @@ function FormField({ label, children }: { label: string; children: React.ReactNo
   );
 }
 
-function EmptyPreview({ theme }: { theme: typeof TEMPLATES[number] }) {
+function EmptyPreview({ theme }: { theme: Theme }) {
   return (
     <div className="profile-page mx-auto shadow-lg border rounded-md" style={{
       width: 794, minHeight: 1123, background: theme.bg, color: theme.ink, fontFamily: theme.font,
@@ -436,7 +436,7 @@ function EmptyPreview({ theme }: { theme: typeof TEMPLATES[number] }) {
   );
 }
 
-type Theme = typeof TEMPLATES[number];
+
 
 function ProfilePreview({
   profile, onChange, onRegenerate, regenSection, theme, logo, company,
