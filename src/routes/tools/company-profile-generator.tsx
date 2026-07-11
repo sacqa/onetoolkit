@@ -71,16 +71,17 @@ type FormInput = {
   extra: string;
 };
 
-const TEMPLATES = [
+type TemplateId = "corporate" | "modern" | "minimal" | "creative" | "luxury" | "startup";
+type Theme = { id: TemplateId; name: string; primary: string; accent: string; bg: string; ink: string; muted: string; font: string };
+
+const TEMPLATES: Theme[] = [
   { id: "corporate", name: "Corporate", primary: "#0f3d6e", accent: "#1e88e5", bg: "#ffffff", ink: "#0b1220", muted: "#5b6a7d", font: "'Inter', 'Helvetica Neue', sans-serif" },
   { id: "modern", name: "Modern", primary: "#111827", accent: "#f59e0b", bg: "#fafafa", ink: "#0b1220", muted: "#6b7280", font: "'Inter', sans-serif" },
   { id: "minimal", name: "Minimal", primary: "#111111", accent: "#111111", bg: "#ffffff", ink: "#111111", muted: "#666666", font: "'Georgia', serif" },
   { id: "creative", name: "Creative", primary: "#7c3aed", accent: "#ec4899", bg: "#fdf4ff", ink: "#1a1033", muted: "#6b5b8c", font: "'Poppins', 'Inter', sans-serif" },
   { id: "luxury", name: "Luxury", primary: "#0a0a0a", accent: "#c9a24a", bg: "#0a0a0a", ink: "#f5f2ea", muted: "#a89f88", font: "'Playfair Display', 'Georgia', serif" },
   { id: "startup", name: "Startup", primary: "#059669", accent: "#10b981", bg: "#f0fdf4", ink: "#052e1c", muted: "#3f6b57", font: "'Inter', sans-serif" },
-] as const;
-
-type TemplateId = typeof TEMPLATES[number]["id"];
+];
 
 const EMPTY: ProfileData = {
   tagline: "", overview: "", mission: "", vision: "",
