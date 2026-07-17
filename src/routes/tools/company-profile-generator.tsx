@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-import { Download, Sparkles, Upload, RefreshCw, Loader2, Plus, Trash2 } from "lucide-react";
+import { Download, Sparkles, RefreshCw, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LogoDropzone, ImagesDropzone, type DroppedImage } from "@/components/image-dropzone";
 import { SITE_NAME } from "@/lib/site";
 import { generateCompanyProfile } from "@/lib/company-profile.functions";
 import { cn } from "@/lib/utils";
@@ -102,13 +103,13 @@ function CompanyProfileTool() {
   const [profile, setProfile] = useState<ProfileData>(EMPTY);
   const [templateId, setTemplateId] = useState<TemplateId>("corporate");
   const [logo, setLogo] = useState<string | null>(null);
+  const [images, setImages] = useState<DroppedImage[]>([]);
   const [customPrimary, setCustomPrimary] = useState<string>("");
   const [customAccent, setCustomAccent] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [regenSection, setRegenSection] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
   const pagesRef = useRef<HTMLDivElement>(null);
-  const logoInputRef = useRef<HTMLInputElement>(null);
 
   const template = TEMPLATES.find((t) => t.id === templateId)!;
   const theme = useMemo(() => ({
@@ -119,44 +120,39 @@ function CompanyProfileTool() {
 
   const set = <K extends keyof FormInput>(k: K, v: FormInput[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  async function onLogoUpload(file: File) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      setLogo(dataUrl);
-      // Auto-extract dominant color for theme
-      try {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const size = 32;
-          canvas.width = size; canvas.height = size;
-          const ctx = canvas.getContext("2d");
-          if (!ctx) return;
-          ctx.drawImage(img, 0, 0, size, size);
-          const { data } = ctx.getImageData(0, 0, size, size);
-          let r = 0, g = 0, b = 0, n = 0;
-          for (let i = 0; i < data.length; i += 4) {
-            const a = data[i + 3];
-            if (a < 120) continue;
-            const rr = data[i], gg = data[i + 1], bb = data[i + 2];
-            // skip near-white / near-black
-            const max = Math.max(rr, gg, bb), min = Math.min(rr, gg, bb);
-            if (max > 240 && min > 240) continue;
-            if (max < 25) continue;
-            r += rr; g += gg; b += bb; n++;
-          }
-          if (n > 0) {
-            const hex = "#" + [r, g, b].map((v) => Math.round(v / n).toString(16).padStart(2, "0")).join("");
-            setCustomPrimary(hex);
-          }
-        };
-        img.src = dataUrl;
-      } catch {
-        /* ignore color extract errors */
-      }
-    };
-    reader.readAsDataURL(file);
+  function extractDominantColor(dataUrl: string) {
+    try {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const size = 32;
+        canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, size, size);
+        const { data } = ctx.getImageData(0, 0, size, size);
+        let r = 0, g = 0, b = 0, n = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          const a = data[i + 3];
+          if (a < 120) continue;
+          const rr = data[i], gg = data[i + 1], bb = data[i + 2];
+          const max = Math.max(rr, gg, bb), min = Math.min(rr, gg, bb);
+          if (max > 240 && min > 240) continue;
+          if (max < 25) continue;
+          r += rr; g += gg; b += bb; n++;
+        }
+        if (n > 0) {
+          const hex = "#" + [r, g, b].map((v) => Math.round(v / n).toString(16).padStart(2, "0")).join("");
+          setCustomPrimary(hex);
+        }
+      };
+      img.src = dataUrl;
+    } catch { /* ignore */ }
+  }
+
+  function handleLogoChange(dataUrl: string | null) {
+    setLogo(dataUrl);
+    if (dataUrl) extractDominantColor(dataUrl);
   }
 
   async function onGenerate() {
@@ -322,21 +318,24 @@ function CompanyProfileTool() {
               </TabsContent>
 
               <TabsContent value="brand" className="space-y-4 mt-4">
-                <FormField label="Company logo">
-                  <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onLogoUpload(f); }} />
-                  <div className="flex items-center gap-3">
-                    <div className="w-16 h-16 rounded-md border bg-muted flex items-center justify-center overflow-hidden">
-                      {logo ? <img src={logo} alt="logo" className="max-w-full max-h-full object-contain" /> : <Upload className="w-5 h-5 text-muted-foreground" />}
-                    </div>
-                    <Button type="button" variant="outline" size="sm" onClick={() => logoInputRef.current?.click()}>
-                      <Upload className="w-4 h-4 mr-2" /> {logo ? "Replace logo" : "Upload logo"}
-                    </Button>
-                    {logo && (
-                      <Button type="button" variant="ghost" size="sm" onClick={() => setLogo(null)}>Remove</Button>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">The primary color is auto-extracted from your logo.</p>
-                </FormField>
+                <LogoDropzone
+                  value={logo}
+                  onChange={handleLogoChange}
+                  label="Company logo"
+                  hint="Drop your logo here or click to browse"
+                  maxSizeMb={5}
+                />
+                <p className="text-xs text-muted-foreground -mt-2">The primary color is auto-extracted from your logo.</p>
+
+                <ImagesDropzone
+                  images={images}
+                  onChange={setImages}
+                  label="Additional images (team, product, gallery)"
+                  hint="Drop images here or click to browse"
+                  maxSizeMb={5}
+                  maxCount={12}
+                />
+
                 <FormField label="Primary brand color">
                   <div className="flex gap-2 items-center">
                     <Input type="color" className="h-10 w-16 p-1" value={customPrimary || template.primary} onChange={(e) => setCustomPrimary(e.target.value)} />
@@ -398,6 +397,7 @@ function CompanyProfileTool() {
                   regenSection={regenSection}
                   theme={theme}
                   logo={logo}
+                  images={images}
                   company={form}
                 />
               ) : (
@@ -439,7 +439,7 @@ function EmptyPreview({ theme }: { theme: Theme }) {
 
 
 function ProfilePreview({
-  profile, onChange, onRegenerate, regenSection, theme, logo, company,
+  profile, onChange, onRegenerate, regenSection, theme, logo, images, company,
 }: {
   profile: ProfileData;
   onChange: (p: ProfileData) => void;
@@ -447,6 +447,7 @@ function ProfilePreview({
   regenSection: string | null;
   theme: Theme;
   logo: string | null;
+  images: DroppedImage[];
   company: FormInput;
 }) {
   const upd = <K extends keyof ProfileData>(k: K, v: ProfileData[K]) => onChange({ ...profile, [k]: v });
@@ -619,6 +620,42 @@ function ProfilePreview({
           </ul>
         </div>
       </div>
+
+      {/* Gallery page (only if images uploaded) */}
+      {images.length > 0 && (
+        <div className="profile-page mx-auto shadow-lg rounded-md" style={pageStyle}>
+          <div style={{ padding: 60 }}>
+            <SectionHeader title="Gallery" theme={theme} />
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: images.length === 1 ? "1fr" : "1fr 1fr",
+                gap: 16,
+              }}
+            >
+              {images.map((img) => (
+                <div
+                  key={img.id}
+                  style={{
+                    aspectRatio: "4 / 3",
+                    borderRadius: 10,
+                    overflow: "hidden",
+                    background: isDark ? "rgba(255,255,255,0.04)" : "#f0f0f2",
+                    border: `1px solid ${theme.muted}22`,
+                  }}
+                >
+                  <img
+                    src={img.dataUrl}
+                    alt={img.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Page 8: Contact */}
       <div className="profile-page mx-auto shadow-lg rounded-md" style={pageStyle}>
