@@ -270,17 +270,18 @@ function DashboardTab({ setActive }: { setActive: (k: SectionKey) => void }) {
   return (
     <div className="space-y-6">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((c) => {
+        {cards.map((c, idx) => {
           const Icon = c.icon;
           return (
             <button
               key={c.key}
               onClick={() => setActive(c.key)}
-              className="text-left rounded-2xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-sm transition"
+              style={{ animationDelay: `${idx * 60}ms` }}
+              className="text-left rounded-2xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 animate-fade-in"
             >
               <div className="flex items-center justify-between">
                 <span className="text-xs uppercase tracking-wider text-muted-foreground">{c.label}</span>
-                <Icon className="h-4 w-4 text-muted-foreground" />
+                <Icon className="h-4 w-4 text-muted-foreground transition-transform group-hover:scale-110" />
               </div>
               <div className="mt-1 text-2xl font-bold">{c.value}</div>
               <div className="text-xs text-muted-foreground">{c.hint}</div>
@@ -292,23 +293,24 @@ function DashboardTab({ setActive }: { setActive: (k: SectionKey) => void }) {
       <div>
         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Manage</h3>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {shortcuts.map((s) => {
+          {shortcuts.map((s, idx) => {
             const Icon = s.icon;
             return (
               <button
                 key={s.key}
                 onClick={() => setActive(s.key)}
-                className="text-left group rounded-2xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-sm transition"
+                style={{ animationDelay: `${idx * 40}ms` }}
+                className="text-left group rounded-2xl border border-border bg-card p-4 hover:border-primary/40 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 animate-fade-in"
               >
                 <div className="flex items-center gap-3">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-violet-500/15 to-fuchsia-500/15 text-primary">
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-violet-500/15 to-fuchsia-500/15 text-primary transition-transform duration-200 group-hover:scale-110 group-hover:rotate-3">
                     <Icon className="h-5 w-5" />
                   </span>
                   <div className="min-w-0">
                     <div className="font-semibold truncate">{s.label}</div>
                     <div className="text-xs text-muted-foreground truncate">{s.desc}</div>
                   </div>
-                  <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground group-hover:text-foreground" />
+                  <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground transition-transform duration-200 group-hover:translate-x-1 group-hover:text-foreground" />
                 </div>
               </button>
             );
