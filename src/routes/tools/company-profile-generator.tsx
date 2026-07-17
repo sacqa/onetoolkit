@@ -397,6 +397,7 @@ function CompanyProfileTool() {
                   regenSection={regenSection}
                   theme={theme}
                   logo={logo}
+                  images={images}
                   company={form}
                 />
               ) : (
