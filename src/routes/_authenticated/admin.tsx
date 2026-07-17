@@ -215,13 +215,18 @@ function Shell({
                           <button
                             key={s.key}
                             onClick={() => { setActive(s.key); setMobileOpen(false); }}
-                            className={`w-full flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-left transition-colors ${
+                            className={`group relative w-full flex items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-left transition-all duration-200 ${
                               isActive
                                 ? "bg-white/15 text-white shadow-inner"
-                                : "text-white/75 hover:bg-white/10 hover:text-white"
+                                : "text-white/75 hover:bg-white/10 hover:text-white hover:translate-x-0.5"
                             }`}
                           >
-                            <Icon className="h-4 w-4 shrink-0" />
+                            <span
+                              className={`absolute left-0 top-1/2 -translate-y-1/2 h-6 w-0.5 rounded-r bg-gradient-to-b from-violet-400 to-fuchsia-400 transition-all duration-200 ${
+                                isActive ? "opacity-100" : "opacity-0 group-hover:opacity-60"
+                              }`}
+                            />
+                            <Icon className={`h-4 w-4 shrink-0 transition-transform ${isActive ? "scale-110" : "group-hover:scale-110"}`} />
                             <span className="truncate">{s.label}</span>
                           </button>
                         );
