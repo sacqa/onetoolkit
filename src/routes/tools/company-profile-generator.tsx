@@ -103,13 +103,13 @@ function CompanyProfileTool() {
   const [profile, setProfile] = useState<ProfileData>(EMPTY);
   const [templateId, setTemplateId] = useState<TemplateId>("corporate");
   const [logo, setLogo] = useState<string | null>(null);
+  const [images, setImages] = useState<DroppedImage[]>([]);
   const [customPrimary, setCustomPrimary] = useState<string>("");
   const [customAccent, setCustomAccent] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [regenSection, setRegenSection] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
   const pagesRef = useRef<HTMLDivElement>(null);
-  const logoInputRef = useRef<HTMLInputElement>(null);
 
   const template = TEMPLATES.find((t) => t.id === templateId)!;
   const theme = useMemo(() => ({
@@ -120,44 +120,39 @@ function CompanyProfileTool() {
 
   const set = <K extends keyof FormInput>(k: K, v: FormInput[K]) => setForm((f) => ({ ...f, [k]: v }));
 
-  async function onLogoUpload(file: File) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result as string;
-      setLogo(dataUrl);
-      // Auto-extract dominant color for theme
-      try {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const size = 32;
-          canvas.width = size; canvas.height = size;
-          const ctx = canvas.getContext("2d");
-          if (!ctx) return;
-          ctx.drawImage(img, 0, 0, size, size);
-          const { data } = ctx.getImageData(0, 0, size, size);
-          let r = 0, g = 0, b = 0, n = 0;
-          for (let i = 0; i < data.length; i += 4) {
-            const a = data[i + 3];
-            if (a < 120) continue;
-            const rr = data[i], gg = data[i + 1], bb = data[i + 2];
-            // skip near-white / near-black
-            const max = Math.max(rr, gg, bb), min = Math.min(rr, gg, bb);
-            if (max > 240 && min > 240) continue;
-            if (max < 25) continue;
-            r += rr; g += gg; b += bb; n++;
-          }
-          if (n > 0) {
-            const hex = "#" + [r, g, b].map((v) => Math.round(v / n).toString(16).padStart(2, "0")).join("");
-            setCustomPrimary(hex);
-          }
-        };
-        img.src = dataUrl;
-      } catch {
-        /* ignore color extract errors */
-      }
-    };
-    reader.readAsDataURL(file);
+  function extractDominantColor(dataUrl: string) {
+    try {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const size = 32;
+        canvas.width = size; canvas.height = size;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, size, size);
+        const { data } = ctx.getImageData(0, 0, size, size);
+        let r = 0, g = 0, b = 0, n = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          const a = data[i + 3];
+          if (a < 120) continue;
+          const rr = data[i], gg = data[i + 1], bb = data[i + 2];
+          const max = Math.max(rr, gg, bb), min = Math.min(rr, gg, bb);
+          if (max > 240 && min > 240) continue;
+          if (max < 25) continue;
+          r += rr; g += gg; b += bb; n++;
+        }
+        if (n > 0) {
+          const hex = "#" + [r, g, b].map((v) => Math.round(v / n).toString(16).padStart(2, "0")).join("");
+          setCustomPrimary(hex);
+        }
+      };
+      img.src = dataUrl;
+    } catch { /* ignore */ }
+  }
+
+  function handleLogoChange(dataUrl: string | null) {
+    setLogo(dataUrl);
+    if (dataUrl) extractDominantColor(dataUrl);
   }
 
   async function onGenerate() {
