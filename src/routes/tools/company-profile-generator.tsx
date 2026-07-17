@@ -318,21 +318,24 @@ function CompanyProfileTool() {
               </TabsContent>
 
               <TabsContent value="brand" className="space-y-4 mt-4">
-                <FormField label="Company logo">
-                  <input ref={logoInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) onLogoUpload(f); }} />
-                  <div className="flex items-center gap-3">
-                    <div className="w-16 h-16 rounded-md border bg-muted flex items-center justify-center overflow-hidden">
-                      {logo ? <img src={logo} alt="logo" className="max-w-full max-h-full object-contain" /> : <Upload className="w-5 h-5 text-muted-foreground" />}
-                    </div>
-                    <Button type="button" variant="outline" size="sm" onClick={() => logoInputRef.current?.click()}>
-                      <Upload className="w-4 h-4 mr-2" /> {logo ? "Replace logo" : "Upload logo"}
-                    </Button>
-                    {logo && (
-                      <Button type="button" variant="ghost" size="sm" onClick={() => setLogo(null)}>Remove</Button>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-2">The primary color is auto-extracted from your logo.</p>
-                </FormField>
+                <LogoDropzone
+                  value={logo}
+                  onChange={handleLogoChange}
+                  label="Company logo"
+                  hint="Drop your logo here or click to browse"
+                  maxSizeMb={5}
+                />
+                <p className="text-xs text-muted-foreground -mt-2">The primary color is auto-extracted from your logo.</p>
+
+                <ImagesDropzone
+                  images={images}
+                  onChange={setImages}
+                  label="Additional images (team, product, gallery)"
+                  hint="Drop images here or click to browse"
+                  maxSizeMb={5}
+                  maxCount={12}
+                />
+
                 <FormField label="Primary brand color">
                   <div className="flex gap-2 items-center">
                     <Input type="color" className="h-10 w-16 p-1" value={customPrimary || template.primary} onChange={(e) => setCustomPrimary(e.target.value)} />
