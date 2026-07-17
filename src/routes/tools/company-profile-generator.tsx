@@ -439,7 +439,7 @@ function EmptyPreview({ theme }: { theme: Theme }) {
 
 
 function ProfilePreview({
-  profile, onChange, onRegenerate, regenSection, theme, logo, company,
+  profile, onChange, onRegenerate, regenSection, theme, logo, images, company,
 }: {
   profile: ProfileData;
   onChange: (p: ProfileData) => void;
@@ -447,6 +447,7 @@ function ProfilePreview({
   regenSection: string | null;
   theme: Theme;
   logo: string | null;
+  images: DroppedImage[];
   company: FormInput;
 }) {
   const upd = <K extends keyof ProfileData>(k: K, v: ProfileData[K]) => onChange({ ...profile, [k]: v });
