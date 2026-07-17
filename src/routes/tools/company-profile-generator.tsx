@@ -621,6 +621,42 @@ function ProfilePreview({
         </div>
       </div>
 
+      {/* Gallery page (only if images uploaded) */}
+      {images.length > 0 && (
+        <div className="profile-page mx-auto shadow-lg rounded-md" style={pageStyle}>
+          <div style={{ padding: 60 }}>
+            <SectionHeader title="Gallery" theme={theme} />
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: images.length === 1 ? "1fr" : "1fr 1fr",
+                gap: 16,
+              }}
+            >
+              {images.map((img) => (
+                <div
+                  key={img.id}
+                  style={{
+                    aspectRatio: "4 / 3",
+                    borderRadius: 10,
+                    overflow: "hidden",
+                    background: isDark ? "rgba(255,255,255,0.04)" : "#f0f0f2",
+                    border: `1px solid ${theme.muted}22`,
+                  }}
+                >
+                  <img
+                    src={img.dataUrl}
+                    alt={img.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+
       {/* Page 8: Contact */}
       <div className="profile-page mx-auto shadow-lg rounded-md" style={pageStyle}>
         <div style={{ position: "absolute", inset: 0, background: `linear-gradient(135deg, ${theme.primary}, ${theme.accent})`, opacity: isDark ? 1 : 0.08 }} />
