@@ -116,7 +116,7 @@ function AdminPage() {
 
   return (
     <Shell active={active} setActive={setActive} mobileOpen={mobileOpen} setMobileOpen={setMobileOpen}>
-      <div className="mb-6">
+      <div className="mb-6 animate-fade-in">
         <div className="flex items-center gap-1.5 text-xs uppercase tracking-wider text-muted-foreground">
           <span>Admin</span>
           <ChevronRight className="h-3 w-3" />
@@ -130,15 +130,17 @@ function AdminPage() {
         </div>
       </div>
 
-      {active === "dashboard" && <DashboardTab setActive={setActive} />}
-      {active === "homepage" && <HomepageTab />}
-      {active === "tools" && <ToolsTab />}
-      {active === "features" && <FeaturesTab />}
-      {active === "integrations" && <IntegrationsTab />}
-      {active === "users" && <UsersTab />}
-      {active === "content" && <ContentTab />}
-      {active === "settings" && <SettingsTab />}
-      {active === "adsense" && <AdSenseTab />}
+      <div key={active} className="animate-fade-in">
+        {active === "dashboard" && <DashboardTab setActive={setActive} />}
+        {active === "homepage" && <HomepageTab />}
+        {active === "tools" && <ToolsTab />}
+        {active === "features" && <FeaturesTab />}
+        {active === "integrations" && <IntegrationsTab />}
+        {active === "users" && <UsersTab />}
+        {active === "content" && <ContentTab />}
+        {active === "settings" && <SettingsTab />}
+        {active === "adsense" && <AdSenseTab />}
+      </div>
     </Shell>
   );
 }
